@@ -8,21 +8,26 @@ Kompatibel mit **TYPO3 12.4, 13.4 und 14**.
 
 ```mermaid
 flowchart LR
-  BE[Backend TCA / IRRE] -->|DataHandler Hook| Hook[JobPublishDataHandlerHook]
+  BE[Backend TCA / IRRE] -->|DataHandler datamap live| Hook[JobPublishDataHandlerHook]
+  Hook -->|cmdmap snapshot| Snap[LiveRecordSnapshot]
+  WS[EXT:workspaces Publish] -->|AfterRecordPublishedEvent| WsL[WorkspaceJobPublishedListener]
+  Snap --> WsL
   Hook -->|dispatch| Event[JobPublishedEvent]
+  WsL -->|dispatch| Event
   Event --> Listener[JobPublishedNotificationListener]
   Event --> Cache[FlushJobCacheListener]
   Listener --> Mail[FluidEmail / Mock]
   Listener --> Slack[SlackWebhookNotifier]
   Listener --> Log[Notification-Log im BE-Modul]
   Hook -->|Slug-Wechsel| Redirects[EXT:redirects 301]
+  WsL -->|Slug-Wechsel| Redirects
   FE[Plugin JobList] --> Filter[Live Filter AJAX]
   FE --> JsonLd[JobPosting JSON-LD]
   FE --> Seo[PageTitle + Open Graph]
   API[PSR-15 /api/jobs] --> JSON[JSON Feed]
 ```
 
-Der DataHandler hat in TYPO3 12–14 kein generisches „Record published“-PSR-14-Event. Der Hook ist deshalb nur die Brücke: sobald eine Stelle sichtbar wird, wird `JobPublishedEvent` dispatched. Mail, Slack, Cache-Flush und Log hängen am Event — nicht am Hook.
+Der DataHandler hat in TYPO3 12–14 kein generisches „Record published“-PSR-14-Event. Der Hook ist deshalb nur die Brücke für **Live**-Änderungen. Workspace-Entwürfe bleiben still; erst `AfterRecordPublishedEvent` (EXT:workspaces, ab TYPO3 12.2) dispatched `JobPublishedEvent`. Mail, Slack, Cache-Flush und Log hängen am Event — nicht am Hook.
 
 ## Installation
 
@@ -64,7 +69,7 @@ Danach:
 | Modul | Web → Job Finder: Kennzahlen, Google-Jobs-Score, Notification-Log |
 | Preview | Page-Modul zeigt Stellenzahl und Live-Filter-Status |
 
-Eine Stelle gilt als **veröffentlicht**, wenn sie neu und nicht versteckt angelegt wird oder `hidden` von 1 auf 0 wechselt (Glühbirne). Workspace-Entwürfe werden ignoriert.
+Eine Stelle gilt als **veröffentlicht**, wenn sie im Live-Workspace neu und nicht versteckt angelegt wird, `hidden` von 1 auf 0 wechselt (Glühbirne), oder wenn ein Workspace-Entwurf nach Live **published** wird (`EXT:workspaces`). Reine Workspace-Saves lösen keine Mail/Slack aus.
 
 ## Frontend
 
@@ -109,6 +114,8 @@ vendor/bin/typo3 smart-job-finder:expire
 
 `expire` ist schedulable (Scheduler-Task) und setzt `hidden=1` bei abgelaufenem `valid_through`.
 
+Workspace-Publish (`EXT:workspaces`, optional): `JobPublishedEvent` bekommt `source=workspace` und die Workspace-ID. IRRE-Kinder (Requirements/Benefits) lösen das Event nicht aus — nur die Job-Tabelle. Ohne Workspaces startet die Extension unverändert.
+
 Eigene Reaktion auf Veröffentlichung:
 
 ```php
@@ -116,7 +123,7 @@ use Agentur\SmartJobFinder\Event\JobPublishedEvent;
 
 public function __invoke(JobPublishedEvent $event): void
 {
-    // $event->getUid(), getTitle(), getRecord() …
+    // $event->getUid(), getTitle(), getRecord(), getSource(), getWorkspaceId() …
 }
 ```
 
@@ -124,6 +131,7 @@ public function __invoke(JobPublishedEvent $event): void
 
 - Plugin-Registrierung als CType; fünfter `configurePlugin`-Parameter nur, wenn die Core-API ihn noch kennt
 - Event-Listener per Services.yaml-Tag (nicht nur `#[AsEventListener]`, das reicht erst ab v13)
+- Workspace-Publish über `AfterRecordPublishedEvent` (Core ab 12.2); ohne `EXT:workspaces` startet die Extension trotzdem
 - Cache-Tags: `AddCacheTagEvent` ab v13, sonst `TSFE->addCacheTags()`
 - `ext_tables.sql` bleibt für v12 die Schema-Quelle; v13/14 generieren ergänzend aus TCA
 - Site Set für v13/14, Static TypoScript für v12

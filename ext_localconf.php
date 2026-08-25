@@ -18,6 +18,8 @@ defined('TYPO3') or die();
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['smart_job_finder']
         = JobPublishDataHandlerHook::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass']['smart_job_finder']
+        = JobPublishDataHandlerHook::class;
 
     $excluded = [
         'tx_smartjobfinder_joblist[q]',

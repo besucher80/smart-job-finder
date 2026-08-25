@@ -26,7 +26,8 @@
     },
     "suggest": {
         "typo3/cms-redirects": "Creates 301 redirects when a job slug changes",
-        "typo3/cms-scheduler": "Run smart-job-finder:expire as a recurring task"
+        "typo3/cms-scheduler": "Run smart-job-finder:expire as a recurring task",
+        "typo3/cms-workspaces": "Dispatches JobPublishedEvent when a workspace job is published to live"
     },
     "autoload": {
         "psr-4": {

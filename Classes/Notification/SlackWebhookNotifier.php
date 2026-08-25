@@ -103,6 +103,12 @@ final class SlackWebhookNotifier implements JobNotifierInterface
                             'type' => 'mrkdwn',
                             'text' => '*Slug*\n' . ($event->getSlug() !== '' ? $event->getSlug() : '–'),
                         ],
+                        [
+                            'type' => 'mrkdwn',
+                            'text' => '*Quelle*\n' . ($event->isFromWorkspace()
+                                ? 'Workspace' . ($event->getWorkspaceId() > 0 ? ' #' . $event->getWorkspaceId() : '')
+                                : 'Live'),
+                        ],
                     ],
                 ],
             ],

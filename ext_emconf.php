@@ -13,6 +13,9 @@ $EM_CONF[$_EXTKEY] = [
             'php' => '8.1.0-8.4.99',
         ],
         'conflicts' => [],
-        'suggests' => [],
+        'suggests' => [
+            'workspaces' => '',
+            'redirects' => '',
+        ],
     ],
 ];

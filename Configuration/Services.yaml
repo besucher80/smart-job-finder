@@ -26,6 +26,13 @@ services:
         identifier: 'smart-job-finder/flush-job-cache'
         event: Agentur\SmartJobFinder\Event\JobPublishedEvent
 
+  Agentur\SmartJobFinder\EventListener\WorkspaceJobPublishedListener:
+    tags:
+      - name: event.listener
+        identifier: 'smart-job-finder/workspace-job-published'
+        method: __invoke
+        event: TYPO3\CMS\Workspaces\Event\AfterRecordPublishedEvent
+
   Agentur\SmartJobFinder\Command\ExpireJobsCommand:
     tags:
       - name: console.command

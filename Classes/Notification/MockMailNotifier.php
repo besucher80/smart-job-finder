@@ -61,6 +61,8 @@ final class MockMailNotifier implements JobNotifierInterface
                 'employmentType' => $event->getEmploymentType(),
                 'slug' => $event->getSlug(),
                 'isNew' => $event->isNew(),
+                'source' => $event->getSource(),
+                'workspaceId' => $event->getWorkspaceId(),
             ]);
 
         $this->mailer->send($email);
@@ -84,6 +86,9 @@ final class MockMailNotifier implements JobNotifierInterface
             'Anstellungsart: ' . ($event->getEmploymentType() !== '' ? $event->getEmploymentType() : '–'),
             'Slug: ' . ($event->getSlug() !== '' ? $event->getSlug() : '–'),
             'Status: ' . ($event->isNew() ? 'neu angelegt' : 'sichtbar geschaltet'),
+            'Quelle: ' . ($event->isFromWorkspace()
+                ? 'Workspace' . ($event->getWorkspaceId() > 0 ? ' #' . $event->getWorkspaceId() : '')
+                : 'Live'),
         ];
 
         return implode("\n", $lines);
