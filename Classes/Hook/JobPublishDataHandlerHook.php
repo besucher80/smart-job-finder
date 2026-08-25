@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Hook;
 
+use Agentur\SmartJobFinder\Domain\JobVisibility;
 use Agentur\SmartJobFinder\Event\JobPublishedEvent;
 use Agentur\SmartJobFinder\Service\SlugRedirectWriter;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -80,7 +81,7 @@ final class JobPublishDataHandlerHook
         }
 
         $record = BackendUtility::getRecord(self::TABLE, $uid) ?? [];
-        if ($record === []) {
+        if ($record === [] || !JobVisibility::isPubliclyVisible($record)) {
             return;
         }
 

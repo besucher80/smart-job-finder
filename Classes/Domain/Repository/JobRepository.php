@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Domain\Repository;
 
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -74,6 +75,7 @@ class JobRepository extends Repository
             )
             ->orderBy('location', 'ASC');
 
+        $this->applyNotExpired($queryBuilder);
         $this->applyStoragePid($queryBuilder);
 
         $locations = [];
@@ -132,6 +134,11 @@ class JobRepository extends Repository
     {
         $query = $this->createQuery();
         $constraints = [];
+        $now = time();
+        $constraints[] = $query->logicalOr(
+            $query->equals('validThrough', 0),
+            $query->greaterThanOrEqual('validThrough', $now),
+        );
 
         $search = trim((string)($filter['q'] ?? ''));
         if ($search !== '') {
@@ -198,9 +205,10 @@ class JobRepository extends Repository
             $sql = 'SELECT uid FROM ' . self::TABLE
                 . ' WHERE MATCH (title, teaser, department, location) AGAINST (:q IN NATURAL LANGUAGE MODE)'
                 . ' AND hidden = 0 AND deleted = 0'
+                . ' AND (valid_through = 0 OR valid_through >= :now)'
                 . ' LIMIT 500';
             $uids = [];
-            foreach ($connection->executeQuery($sql, ['q' => $search])->fetchFirstColumn() as $uid) {
+            foreach ($connection->executeQuery($sql, ['q' => $search, 'now' => time()])->fetchFirstColumn() as $uid) {
                 $uids[] = (int)$uid;
             }
 
@@ -215,6 +223,17 @@ class JobRepository extends Repository
         $driver = $this->connectionPool->getConnectionForTable(self::TABLE)->getParams()['driver'] ?? '';
 
         return in_array($driver, ['mysqli', 'pdo_mysql'], true);
+    }
+
+    private function applyNotExpired(QueryBuilder $queryBuilder): void
+    {
+        $now = time();
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->or(
+                $queryBuilder->expr()->eq('valid_through', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
+                $queryBuilder->expr()->gte('valid_through', $queryBuilder->createNamedParameter($now, Connection::PARAM_INT)),
+            ),
+        );
     }
 
     private function applyStoragePid(QueryBuilder $queryBuilder): void

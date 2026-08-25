@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Controller;
 
+use Agentur\SmartJobFinder\Domain\JobVisibility;
 use Agentur\SmartJobFinder\Domain\Model\Job;
 use Agentur\SmartJobFinder\Domain\Repository\JobRepository;
 use Agentur\SmartJobFinder\Seo\JobFrontendSeoWriter;
@@ -41,6 +42,10 @@ final class JobController extends ActionController
 
     public function showAction(Job $job): ResponseInterface
     {
+        if (JobVisibility::isExpired(['valid_through' => $job->getValidThrough()])) {
+            return $this->responseFactory->createResponse(404);
+        }
+
         $canonicalUrl = $this->jobUrl($job);
         $this->seoWriter->apply($job, $canonicalUrl);
         $this->cacheTagger->add([

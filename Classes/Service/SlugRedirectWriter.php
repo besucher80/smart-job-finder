@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Creates a 301 in EXT:redirects when a published job slug changes.
@@ -64,11 +65,25 @@ final class SlugRedirectWriter
                 'keep_query_parameters' => 0,
                 'is_regexp' => 0,
             ]);
+            $this->rebuildRedirectCache();
         } catch (\Throwable $exception) {
             $this->logger->warning('Could not create slug redirect.', [
                 'jobUid' => $jobUid,
                 'exception' => $exception->getMessage(),
             ]);
+        }
+    }
+
+    private function rebuildRedirectCache(): void
+    {
+        $className = 'TYPO3\\CMS\\Redirects\\Service\\RedirectCacheService';
+        if (!class_exists($className)) {
+            return;
+        }
+
+        $service = GeneralUtility::makeInstance($className);
+        if (method_exists($service, 'rebuild')) {
+            $service->rebuild();
         }
     }
 

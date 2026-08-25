@@ -81,7 +81,11 @@ Slug-Wechsel schreibt bei geladenem `EXT:redirects` einen 301 von `/jobs/alter-s
 
 ## JSON-API
 
-`GET /api/jobs` (auch unter `/de/api/jobs`) liefert einen JSON-Feed, **bevor** TYPO3 die Seite auflöst (PSR-15 Middleware). Storage-PID: Extension Configuration `apiStoragePid`.
+`GET /api/jobs` (auch unter `/de/api/jobs`) liefert einen JSON-Feed, **bevor** TYPO3 die Seite auflöst (PSR-15 Middleware).
+
+Ohne gesetztes `apiStoragePid` antwortet die API mit **403** — sie listet nicht alle Jobs der Instanz. Abgelaufene `valid_through`-Stellen erscheinen weder in Liste, Detail (404) noch API, auch wenn der Scheduler noch nicht gelaufen ist.
+
+Slug-Wechsel schreibt den Redirect **und** baut den Redirect-Cache von `EXT:redirects` neu. Ein reines `INSERT` würde sonst erst nach Cache-Flush greifen.
 
 ## PSR-14 Notifications
 
@@ -94,7 +98,7 @@ Einstellungen unter **Admin Tools → Settings → Extension Configuration → s
 | `mailTo` / `mailFrom` | Beispieladressen | Wird nur ohne Mock-Modus genutzt (FluidEmail) |
 | `slackWebhookUrl` | leer | Incoming Webhook; nur ohne Mock-Modus |
 | `jobPathPrefix` | `/jobs` | Prefix für Slug-Redirects |
-| `apiStoragePid` | `0` | PID-Filter für `/api/jobs` |
+| `apiStoragePid` | `0` | Pflicht für `/api/jobs` (sonst 403, kein Instanz-Leak) |
 
 Demo ohne Backend-Klick:
 

@@ -44,12 +44,26 @@ final class JobApiMiddleware implements MiddlewareInterface
 
         $storagePid = (int)($config['apiStoragePid'] ?? 0);
         $languageId = $this->languageId($request);
-        $cacheIdentifier = 'api_' . md5($storagePid . '_' . $languageId);
         $headers = [
             'Cache-Control' => 'public, max-age=60',
             'X-Smart-Job-Finder' => 'api',
         ];
 
+        if ($storagePid <= 0) {
+            return new JsonResponse(
+                [
+                    'meta' => [
+                        'count' => 0,
+                        'error' => 'apiStoragePid is not configured',
+                    ],
+                    'data' => [],
+                ],
+                403,
+                $headers,
+            );
+        }
+
+        $cacheIdentifier = 'api_' . md5($storagePid . '_' . $languageId);
         $cache = $this->cacheManager->hasCache('smart_job_finder')
             ? $this->cacheManager->getCache('smart_job_finder')
             : null;
@@ -82,6 +96,10 @@ final class JobApiMiddleware implements MiddlewareInterface
                 $queryBuilder->expr()->in(
                     'sys_language_uid',
                     implode(',', [-1, $languageId]),
+                ),
+                $queryBuilder->expr()->or(
+                    $queryBuilder->expr()->eq('valid_through', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
+                    $queryBuilder->expr()->gte('valid_through', $queryBuilder->createNamedParameter(time(), Connection::PARAM_INT)),
                 ),
             )
             ->orderBy('featured', 'DESC')
