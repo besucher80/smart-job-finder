@@ -1,0 +1,42 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default"/>
+
+<f:section name="Main">
+    <f:asset.css identifier="smart-job-finder" href="EXT:smart_job_finder/Resources/Public/Css/job-finder.css"/>
+    <f:if condition="{settings.enableLiveFilter}">
+        <f:asset.script identifier="smart-job-finder" src="EXT:smart_job_finder/Resources/Public/JavaScript/live-filter.js" defer="true"/>
+    </f:if>
+
+    <section
+        class="job-finder"
+        data-job-finder
+        data-live-filter="{settings.enableLiveFilter}"
+        data-filter-url="{f:uri.action(action: 'filter')}"
+        aria-labelledby="job-finder-heading"
+    >
+        <header class="job-finder__header">
+            <div>
+                <h2 id="job-finder-heading" class="job-finder__title">
+                    <f:translate key="list.headline"/>
+                </h2>
+                <p class="job-finder__count" data-job-count aria-live="polite">
+                    <f:translate key="list.count" arguments="{0: jobCount}"/>
+                </p>
+            </div>
+            <f:if condition="{settings.enableLiveFilter}">
+                <p class="job-finder__hint"><f:translate key="filter.live"/></p>
+            </f:if>
+        </header>
+
+        <f:render partial="Job/Filter" arguments="{_all}"/>
+
+        <div class="job-finder__results" data-job-results>
+            <f:render partial="Job/Results" arguments="{jobs: jobs, jobCount: jobCount, companyNames: companyNames, pagination: pagination, filter: filter, settings: settings}"/>
+        </div>
+
+        <f:if condition="{itemListJson}">
+            <script type="application/ld+json">{itemListJson -> f:format.raw()}</script>
+        </f:if>
+    </section>
+</f:section>
+</html>

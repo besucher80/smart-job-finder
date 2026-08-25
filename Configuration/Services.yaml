@@ -1,0 +1,41 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Agentur\SmartJobFinder\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+
+  Agentur\SmartJobFinder\Hook\JobPublishDataHandlerHook:
+    public: true
+
+  Agentur\SmartJobFinder\Seo\JobPageTitleProvider:
+    public: true
+
+  Agentur\SmartJobFinder\EventListener\JobPublishedNotificationListener:
+    tags:
+      - name: event.listener
+        identifier: 'smart-job-finder/job-published-notification'
+        event: Agentur\SmartJobFinder\Event\JobPublishedEvent
+
+  Agentur\SmartJobFinder\EventListener\FlushJobCacheListener:
+    tags:
+      - name: event.listener
+        identifier: 'smart-job-finder/flush-job-cache'
+        event: Agentur\SmartJobFinder\Event\JobPublishedEvent
+
+  Agentur\SmartJobFinder\Command\ExpireJobsCommand:
+    tags:
+      - name: console.command
+        command: 'smart-job-finder:expire'
+        description: 'Hide jobs whose valid_through date has passed'
+        schedulable: true
+
+  Agentur\SmartJobFinder\Command\NotifyTestCommand:
+    tags:
+      - name: console.command
+        command: 'smart-job-finder:notify-test'
+        description: 'Dispatch JobPublishedEvent (demo / mock mail + Slack)'
+        schedulable: false

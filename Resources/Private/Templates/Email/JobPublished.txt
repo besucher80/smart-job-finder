@@ -1,0 +1,6 @@
+Neue Stelle veröffentlicht: {title}
+
+UID: {uid}
+Ort: {location}
+Anstellungsart: {employmentType}
+Slug: {slug}

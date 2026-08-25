@@ -1,0 +1,13 @@
+mod.wizards.newContentElement.wizardItems.plugins {
+  elements {
+    smartjobfinder_joblist {
+      iconIdentifier = smart-job-finder-plugin
+      title = LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_db.xlf:plugin.joblist.title
+      description = LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_db.xlf:plugin.joblist.description
+      tt_content_defValues {
+        CType = smartjobfinder_joblist
+      }
+    }
+  }
+  show := addToList(smartjobfinder_joblist)
+}

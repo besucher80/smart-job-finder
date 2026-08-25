@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang_db.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
+        <header/>
+        <body>
+            <trans-unit id="plugin.joblist.title" resname="plugin.joblist.title">
+                <source>Smart Job Finder</source>
+            </trans-unit>
+            <trans-unit id="plugin.joblist.description" resname="plugin.joblist.description">
+                <source>Job list with live filter, detail view and JobPosting structured data.</source>
+            </trans-unit>
+            <trans-unit id="flexform.sheet.general" resname="flexform.sheet.general">
+                <source>Plugin</source>
+            </trans-unit>
+            <trans-unit id="flexform.storagePid" resname="flexform.storagePid">
+                <source>Storage folder</source>
+            </trans-unit>
+            <trans-unit id="flexform.storagePid.description" resname="flexform.storagePid.description">
+                <source>Sysfolder(s) that contain job and company records.</source>
+            </trans-unit>
+            <trans-unit id="flexform.detailPid" resname="flexform.detailPid">
+                <source>Detail page</source>
+            </trans-unit>
+            <trans-unit id="flexform.enableLiveFilter" resname="flexform.enableLiveFilter">
+                <source>Enable live filter</source>
+            </trans-unit>
+            <trans-unit id="flexform.enableLiveFilter.description" resname="flexform.enableLiveFilter.description">
+                <source>Updates the list via AJAX while typing. Works without JavaScript as a GET form.</source>
+            </trans-unit>
+
+            <trans-unit id="tx_smartjobfinder_domain_model_job" resname="tx_smartjobfinder_domain_model_job">
+                <source>Job</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.tab.meta" resname="tx_smartjobfinder_domain_model_job.tab.meta">
+                <source>Location &amp; contract</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.tab.salary" resname="tx_smartjobfinder_domain_model_job.tab.salary">
+                <source>Salary &amp; application</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.tab.details" resname="tx_smartjobfinder_domain_model_job.tab.details">
+                <source>Requirements &amp; benefits</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.palette.contract" resname="tx_smartjobfinder_domain_model_job.palette.contract">
+                <source>Contract</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.palette.salary" resname="tx_smartjobfinder_domain_model_job.palette.salary">
+                <source>Salary range</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.title" resname="tx_smartjobfinder_domain_model_job.title">
+                <source>Job title</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.title.description" resname="tx_smartjobfinder_domain_model_job.title.description">
+                <source>Used as the public headline and as the slug source.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.slug" resname="tx_smartjobfinder_domain_model_job.slug">
+                <source>URL slug</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.slug.description" resname="tx_smartjobfinder_domain_model_job.slug.description">
+                <source>Generated from the title. Unique per site. Used by the route enhancer.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.featured" resname="tx_smartjobfinder_domain_model_job.featured">
+                <source>Featured job</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.featured.description" resname="tx_smartjobfinder_domain_model_job.featured.description">
+                <source>Featured jobs are listed first.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.teaser" resname="tx_smartjobfinder_domain_model_job.teaser">
+                <source>Teaser</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.description" resname="tx_smartjobfinder_domain_model_job.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.department" resname="tx_smartjobfinder_domain_model_job.department">
+                <source>Department</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.location" resname="tx_smartjobfinder_domain_model_job.location">
+                <source>Location</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.location.description" resname="tx_smartjobfinder_domain_model_job.location.description">
+                <source>City or region, e.g. Hamburg. Used by the live filter.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.location_country" resname="tx_smartjobfinder_domain_model_job.location_country">
+                <source>Country (ISO)</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.employment_type" resname="tx_smartjobfinder_domain_model_job.employment_type">
+                <source>Employment type</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.workplace_type" resname="tx_smartjobfinder_domain_model_job.workplace_type">
+                <source>Workplace type</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.salary_min" resname="tx_smartjobfinder_domain_model_job.salary_min">
+                <source>Salary min</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.salary_max" resname="tx_smartjobfinder_domain_model_job.salary_max">
+                <source>Salary max</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.salary_currency" resname="tx_smartjobfinder_domain_model_job.salary_currency">
+                <source>Currency</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.salary_interval" resname="tx_smartjobfinder_domain_model_job.salary_interval">
+                <source>Interval</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.valid_through" resname="tx_smartjobfinder_domain_model_job.valid_through">
+                <source>Valid through</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.valid_through.description" resname="tx_smartjobfinder_domain_model_job.valid_through.description">
+                <source>Application deadline. Mapped to schema.org validThrough.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.application_url" resname="tx_smartjobfinder_domain_model_job.application_url">
+                <source>Application link</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.contact_email" resname="tx_smartjobfinder_domain_model_job.contact_email">
+                <source>Contact e-mail</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.company" resname="tx_smartjobfinder_domain_model_job.company">
+                <source>Company</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.company.description" resname="tx_smartjobfinder_domain_model_job.company.description">
+                <source>Reusable company record (select, not inline).</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.company.none" resname="tx_smartjobfinder_domain_model_job.company.none">
+                <source>No company</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.requirements" resname="tx_smartjobfinder_domain_model_job.requirements">
+                <source>Requirements</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.requirements.description" resname="tx_smartjobfinder_domain_model_job.requirements.description">
+                <source>Inline records (IRRE). Drag to reorder.</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.benefits" resname="tx_smartjobfinder_domain_model_job.benefits">
+                <source>Benefits</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.benefits.description" resname="tx_smartjobfinder_domain_model_job.benefits.description">
+                <source>Inline records (IRRE). Drag to reorder.</source>
+            </trans-unit>
+
+            <trans-unit id="employment_type.FULL_TIME" resname="employment_type.FULL_TIME"><source>Full time</source></trans-unit>
+            <trans-unit id="employment_type.PART_TIME" resname="employment_type.PART_TIME"><source>Part time</source></trans-unit>
+            <trans-unit id="employment_type.CONTRACTOR" resname="employment_type.CONTRACTOR"><source>Contract</source></trans-unit>
+            <trans-unit id="employment_type.TEMPORARY" resname="employment_type.TEMPORARY"><source>Temporary</source></trans-unit>
+            <trans-unit id="employment_type.INTERN" resname="employment_type.INTERN"><source>Internship</source></trans-unit>
+            <trans-unit id="workplace_type.ONSITE" resname="workplace_type.ONSITE"><source>On-site</source></trans-unit>
+            <trans-unit id="workplace_type.HYBRID" resname="workplace_type.HYBRID"><source>Hybrid</source></trans-unit>
+            <trans-unit id="workplace_type.REMOTE" resname="workplace_type.REMOTE"><source>Remote</source></trans-unit>
+            <trans-unit id="salary_interval.YEAR" resname="salary_interval.YEAR"><source>Year</source></trans-unit>
+            <trans-unit id="salary_interval.MONTH" resname="salary_interval.MONTH"><source>Month</source></trans-unit>
+            <trans-unit id="salary_interval.HOUR" resname="salary_interval.HOUR"><source>Hour</source></trans-unit>
+
+            <trans-unit id="tx_smartjobfinder_domain_model_company" resname="tx_smartjobfinder_domain_model_company">
+                <source>Company</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_company.name" resname="tx_smartjobfinder_domain_model_company.name">
+                <source>Name</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_company.website" resname="tx_smartjobfinder_domain_model_company.website">
+                <source>Website</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_company.logo" resname="tx_smartjobfinder_domain_model_company.logo">
+                <source>Logo</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_company.description" resname="tx_smartjobfinder_domain_model_company.description">
+                <source>Description</source>
+            </trans-unit>
+
+            <trans-unit id="tx_smartjobfinder_domain_model_requirement" resname="tx_smartjobfinder_domain_model_requirement">
+                <source>Requirement</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_requirement.job" resname="tx_smartjobfinder_domain_model_requirement.job">
+                <source>Job</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_requirement.title" resname="tx_smartjobfinder_domain_model_requirement.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_requirement.description" resname="tx_smartjobfinder_domain_model_requirement.description">
+                <source>Description</source>
+            </trans-unit>
+
+            <trans-unit id="tx_smartjobfinder_domain_model_benefit" resname="tx_smartjobfinder_domain_model_benefit">
+                <source>Benefit</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_benefit.job" resname="tx_smartjobfinder_domain_model_benefit.job">
+                <source>Job</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_benefit.title" resname="tx_smartjobfinder_domain_model_benefit.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_benefit.description" resname="tx_smartjobfinder_domain_model_benefit.description">
+                <source>Short note</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

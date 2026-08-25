@@ -1,0 +1,4 @@
+name: agentur/smart-job-finder
+label: Smart Job Finder
+dependencies:
+  - typo3/fluid-styled-content

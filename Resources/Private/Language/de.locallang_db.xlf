@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang_db.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
+        <header/>
+        <body>
+            <trans-unit id="plugin.joblist.title" resname="plugin.joblist.title">
+                <source>Smart Job Finder</source>
+                <target>Smart Job Finder</target>
+            </trans-unit>
+            <trans-unit id="plugin.joblist.description" resname="plugin.joblist.description">
+                <source>Job list with live filter, detail view and JobPosting structured data.</source>
+                <target>Stellenliste mit Live-Filter, Detailansicht und JobPosting Structured Data.</target>
+            </trans-unit>
+            <trans-unit id="flexform.sheet.general" resname="flexform.sheet.general">
+                <source>Plugin</source>
+                <target>Plugin</target>
+            </trans-unit>
+            <trans-unit id="flexform.storagePid" resname="flexform.storagePid">
+                <source>Storage folder</source>
+                <target>Speicherordner</target>
+            </trans-unit>
+            <trans-unit id="flexform.storagePid.description" resname="flexform.storagePid.description">
+                <source>Sysfolder(s) that contain job and company records.</source>
+                <target>Sysordner mit Stellen- und Unternehmensdatensätzen.</target>
+            </trans-unit>
+            <trans-unit id="flexform.detailPid" resname="flexform.detailPid">
+                <source>Detail page</source>
+                <target>Detailseite</target>
+            </trans-unit>
+            <trans-unit id="flexform.enableLiveFilter" resname="flexform.enableLiveFilter">
+                <source>Enable live filter</source>
+                <target>Live-Filter aktivieren</target>
+            </trans-unit>
+            <trans-unit id="flexform.enableLiveFilter.description" resname="flexform.enableLiveFilter.description">
+                <source>Updates the list via AJAX while typing. Works without JavaScript as a GET form.</source>
+                <target>Aktualisiert die Liste per AJAX während der Eingabe. Funktioniert ohne JavaScript als GET-Formular.</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job" resname="tx_smartjobfinder_domain_model_job">
+                <source>Job</source>
+                <target>Stelle</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.title" resname="tx_smartjobfinder_domain_model_job.title">
+                <source>Job title</source>
+                <target>Stellentitel</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.slug" resname="tx_smartjobfinder_domain_model_job.slug">
+                <source>URL slug</source>
+                <target>URL-Slug</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_company" resname="tx_smartjobfinder_domain_model_company">
+                <source>Company</source>
+                <target>Unternehmen</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_requirement" resname="tx_smartjobfinder_domain_model_requirement">
+                <source>Requirement</source>
+                <target>Anforderung</target>
+            </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_benefit" resname="tx_smartjobfinder_domain_model_benefit">
+                <source>Benefit</source>
+                <target>Benefit</target>
+            </trans-unit>
+            <trans-unit id="employment_type.FULL_TIME" resname="employment_type.FULL_TIME"><source>Full time</source><target>Vollzeit</target></trans-unit>
+            <trans-unit id="employment_type.PART_TIME" resname="employment_type.PART_TIME"><source>Part time</source><target>Teilzeit</target></trans-unit>
+            <trans-unit id="workplace_type.ONSITE" resname="workplace_type.ONSITE"><source>On-site</source><target>Vor Ort</target></trans-unit>
+            <trans-unit id="workplace_type.REMOTE" resname="workplace_type.REMOTE"><source>Remote</source><target>Remote</target></trans-unit>
+        </body>
+    </file>
+</xliff>

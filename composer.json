@@ -1,0 +1,46 @@
+{
+    "name": "agentur/smart-job-finder",
+    "type": "typo3-cms-extension",
+    "description": "Smart Job Finder: job board with TCA/IRRE, slugs, categories, live filters, JobPosting structured data and PSR-14 publish notifications (mock mail / Slack webhook). Compatible with TYPO3 12, 13 and 14.",
+    "license": "GPL-2.0-or-later",
+    "keywords": [
+        "typo3",
+        "job",
+        "stellenangebote",
+        "json-ld",
+        "psr-14"
+    ],
+    "authors": [
+        {
+            "name": "Agentur",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "typo3/cms-core": "^12.4 || ^13.4 || ^14.0",
+        "typo3/cms-backend": "^12.4 || ^13.4 || ^14.0",
+        "typo3/cms-extbase": "^12.4 || ^13.4 || ^14.0",
+        "typo3/cms-fluid": "^12.4 || ^13.4 || ^14.0",
+        "typo3/cms-frontend": "^12.4 || ^13.4 || ^14.0"
+    },
+    "suggest": {
+        "typo3/cms-redirects": "Creates 301 redirects when a job slug changes",
+        "typo3/cms-scheduler": "Run smart-job-finder:expire as a recurring task"
+    },
+    "autoload": {
+        "psr-4": {
+            "Agentur\\SmartJobFinder\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Agentur\\SmartJobFinder\\Tests\\": "Tests/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "smart_job_finder"
+        }
+    }
+}

@@ -1,0 +1,15 @@
+plugin.tx_smartjobfinder_joblist {
+  view {
+    templateRootPath = EXT:smart_job_finder/Resources/Private/Templates/
+    partialRootPath = EXT:smart_job_finder/Resources/Private/Partials/
+    layoutRootPath = EXT:smart_job_finder/Resources/Private/Layouts/
+  }
+  persistence {
+    storagePid =
+  }
+  settings {
+    itemsPerPage = 12
+    detailPid =
+    enableLiveFilter = 1
+  }
+}

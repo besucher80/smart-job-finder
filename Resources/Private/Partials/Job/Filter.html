@@ -1,0 +1,54 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<form action="{f:uri.action(action: 'filter')}" method="get" class="job-finder__filters" data-job-filters="1">
+    <div class="job-finder__field">
+        <label for="job-filter-q"><f:translate key="filter.search"/></label>
+        <input
+            id="job-filter-q"
+            type="search"
+            name="tx_smartjobfinder_joblist[q]"
+            value="{filter.q}"
+            placeholder="{f:translate(key: 'filter.search.placeholder')}"
+            autocomplete="off"
+        />
+    </div>
+
+    <div class="job-finder__field">
+        <label for="job-filter-location"><f:translate key="filter.location"/></label>
+        <select id="job-filter-location" name="tx_smartjobfinder_joblist[location]">
+            <option value=""><f:translate key="filter.location.all"/></option>
+            <f:for each="{locations}" as="loc">
+                <option value="{loc}" {f:if(condition: '{filter.location} == {loc}', then: 'selected="selected"')}>{loc}</option>
+            </f:for>
+        </select>
+    </div>
+
+    <div class="job-finder__field">
+        <label for="job-filter-employment"><f:translate key="filter.employmentType"/></label>
+        <select id="job-filter-employment" name="tx_smartjobfinder_joblist[employmentType]">
+            <option value=""><f:translate key="filter.employmentType.all"/></option>
+            <f:for each="{employmentTypes}" as="labelKey" key="value">
+                <option value="{value}" {f:if(condition: '{filter.employmentType} == {value}', then: 'selected="selected"')}>
+                    <f:translate key="{labelKey}"/>
+                </option>
+            </f:for>
+        </select>
+    </div>
+
+    <div class="job-finder__field">
+        <label for="job-filter-workplace"><f:translate key="filter.workplaceType"/></label>
+        <select id="job-filter-workplace" name="tx_smartjobfinder_joblist[workplaceType]">
+            <option value=""><f:translate key="filter.workplaceType.all"/></option>
+            <f:for each="{workplaceTypes}" as="labelKey" key="value">
+                <option value="{value}" {f:if(condition: '{filter.workplaceType} == {value}', then: 'selected="selected"')}>
+                    <f:translate key="{labelKey}"/>
+                </option>
+            </f:for>
+        </select>
+    </div>
+
+    <div class="job-finder__actions">
+        <button type="submit" class="job-finder__submit"><f:translate key="filter.submit"/></button>
+        <f:link.action action="list" class="job-finder__reset"><f:translate key="filter.reset"/></f:link.action>
+    </div>
+</form>
+</html>

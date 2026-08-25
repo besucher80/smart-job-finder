@@ -1,0 +1,123 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default"/>
+
+<f:section name="Main">
+    <f:asset.css identifier="smart-job-finder" href="EXT:smart_job_finder/Resources/Public/Css/job-finder.css"/>
+
+    <article class="job-finder job-finder--detail" itemscope itemtype="https://schema.org/JobPosting">
+        <p class="job-finder__back">
+            <f:link.action action="list" class="job-finder__back-link">
+                ← <f:translate key="job.back"/>
+            </f:link.action>
+        </p>
+
+        <header class="job-finder__detail-header">
+            <f:if condition="{job.featured}">
+                <span class="job-finder__badge"><f:translate key="job.featured"/></span>
+            </f:if>
+            <h1 class="job-finder__title" itemprop="title">{job.title}</h1>
+            <ul class="job-finder__meta">
+                <f:if condition="{job.company}">
+                    <li>{job.company.name}</li>
+                </f:if>
+                <f:if condition="{job.location}">
+                    <li>{job.location}</li>
+                </f:if>
+                <li><f:translate key="job.employmentType.{job.employmentType}"/></li>
+                <li><f:translate key="job.workplaceType.{job.workplaceType}"/></li>
+                <f:if condition="{job.department}">
+                    <li>{job.department}</li>
+                </f:if>
+            </ul>
+            <f:if condition="{job.categories}">
+                <ul class="job-finder__tags">
+                    <f:for each="{job.categories}" as="category">
+                        <li>{category.title}</li>
+                    </f:for>
+                </ul>
+            </f:if>
+        </header>
+
+        <f:if condition="{job.teaser}">
+            <p class="job-finder__lead">{job.teaser}</p>
+        </f:if>
+
+        <div class="job-finder__body" itemprop="description">
+            <f:format.html>{job.description}</f:format.html>
+        </div>
+
+        <f:if condition="{job.requirements}">
+            <section class="job-finder__block">
+                <h2><f:translate key="job.requirements"/></h2>
+                <ul class="job-finder__list">
+                    <f:for each="{job.requirements}" as="requirement">
+                        <li>
+                            <strong>{requirement.title}</strong>
+                            <f:if condition="{requirement.description}">
+                                <span>{requirement.description}</span>
+                            </f:if>
+                        </li>
+                    </f:for>
+                </ul>
+            </section>
+        </f:if>
+
+        <f:if condition="{job.benefits}">
+            <section class="job-finder__block">
+                <h2><f:translate key="job.benefits"/></h2>
+                <ul class="job-finder__chips">
+                    <f:for each="{job.benefits}" as="benefit">
+                        <li title="{benefit.description}">{benefit.title}</li>
+                    </f:for>
+                </ul>
+            </section>
+        </f:if>
+
+        <aside class="job-finder__aside">
+            <f:if condition="{job.salaryMin} || {job.salaryMax}">
+                <p>
+                    <strong><f:translate key="job.salary"/>:</strong>
+                    <f:if condition="{job.salaryMin} && {job.salaryMax}">
+                        <f:then>
+                            {job.salaryMin}–{job.salaryMax} {job.salaryCurrency}
+                        </f:then>
+                        <f:else>
+                            <f:if condition="{job.salaryMin}">{job.salaryMin} {job.salaryCurrency}</f:if>
+                            <f:if condition="{job.salaryMax}">{job.salaryMax} {job.salaryCurrency}</f:if>
+                        </f:else>
+                    </f:if>
+                    <f:translate key="job.salaryInterval.{job.salaryInterval}"/>
+                </p>
+            </f:if>
+            <f:if condition="{job.validThrough}">
+                <p>
+                    <strong><f:translate key="job.validThrough"/>:</strong>
+                    <f:format.date format="d.m.Y">{job.validThrough}</f:format.date>
+                </p>
+            </f:if>
+            <f:if condition="{job.applicationUrl}">
+                <p>
+                    <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply">
+                        <f:translate key="job.apply"/>
+                    </f:link.typolink>
+                </p>
+            </f:if>
+        </aside>
+
+        <f:if condition="{job.company}">
+            <section class="job-finder__company">
+                <h2><f:translate key="job.company"/></h2>
+                <f:if condition="{job.company.logo}">
+                    <f:image image="{job.company.logo}" alt="{job.company.name}" class="job-finder__logo" maxWidth="160"/>
+                </f:if>
+                <h3>{job.company.name}</h3>
+                <f:format.html>{job.company.description}</f:format.html>
+            </section>
+        </f:if>
+
+        <f:if condition="{jobPostingJson}">
+            <script type="application/ld+json">{jobPostingJson -> f:format.raw()}</script>
+        </f:if>
+    </article>
+</f:section>
+</html>

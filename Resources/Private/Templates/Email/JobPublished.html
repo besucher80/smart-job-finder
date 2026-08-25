@@ -1,0 +1,18 @@
+<f:layout name="SystemEmail"/>
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+    <h1>Neue Stelle veröffentlicht</h1>
+    <p>
+        <strong>{title}</strong>
+        <f:if condition="{isNew}">
+            <f:then>wurde neu angelegt.</f:then>
+            <f:else>wurde sichtbar geschaltet.</f:else>
+        </f:if>
+    </p>
+    <ul>
+        <li>UID: {uid}</li>
+        <li>Ort: {location}</li>
+        <li>Anstellungsart: {employmentType}</li>
+        <li>Slug: {slug}</li>
+    </ul>
+</f:section>

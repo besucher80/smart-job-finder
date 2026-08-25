@@ -1,0 +1,20 @@
+routeEnhancers:
+  SmartJobFinder:
+    type: Extbase
+    extension: SmartJobFinder
+    plugin: JobList
+    defaultController: 'Job::list'
+    routes:
+      -
+        routePath: '/'
+        _controller: 'Job::list'
+      -
+        routePath: '/{job}'
+        _controller: 'Job::show'
+        _arguments:
+          job: job
+    aspects:
+      job:
+        type: PersistedAliasMapper
+        tableName: tx_smartjobfinder_domain_model_job
+        routeFieldName: slug

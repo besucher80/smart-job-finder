@@ -1,0 +1,19 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div data-count="{jobCount}">
+    <f:if condition="{jobs}">
+        <f:then>
+            <ul class="job-finder__grid">
+                <f:for each="{jobs}" as="job">
+                    <li>
+                        <f:render partial="Job/Item" arguments="{job: job, companyNames: companyNames, settings: settings}"/>
+                    </li>
+                </f:for>
+            </ul>
+            <f:render partial="Job/Pagination" arguments="{pagination: pagination, filter: filter}"/>
+        </f:then>
+        <f:else>
+            <p class="job-finder__empty"><f:translate key="list.empty"/></p>
+        </f:else>
+    </f:if>
+</div>
+</html>

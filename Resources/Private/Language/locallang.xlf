@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
+        <header/>
+        <body>
+            <trans-unit id="list.headline" resname="list.headline">
+                <source>Open positions</source>
+            </trans-unit>
+            <trans-unit id="list.count" resname="list.count">
+                <source>%s jobs</source>
+            </trans-unit>
+            <trans-unit id="list.empty" resname="list.empty">
+                <source>No jobs match your filters. Try a broader search.</source>
+            </trans-unit>
+            <trans-unit id="pagination.label" resname="pagination.label">
+                <source>Job list pagination</source>
+            </trans-unit>
+            <trans-unit id="pagination.prev" resname="pagination.prev">
+                <source>Previous</source>
+            </trans-unit>
+            <trans-unit id="pagination.next" resname="pagination.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="pagination.status" resname="pagination.status">
+                <source>Page %s of %s</source>
+            </trans-unit>
+            <trans-unit id="filter.search" resname="filter.search">
+                <source>Search</source>
+            </trans-unit>
+            <trans-unit id="filter.search.placeholder" resname="filter.search.placeholder">
+                <source>Title, location, department…</source>
+            </trans-unit>
+            <trans-unit id="filter.location" resname="filter.location">
+                <source>Location</source>
+            </trans-unit>
+            <trans-unit id="filter.location.all" resname="filter.location.all">
+                <source>All locations</source>
+            </trans-unit>
+            <trans-unit id="filter.employmentType" resname="filter.employmentType">
+                <source>Employment type</source>
+            </trans-unit>
+            <trans-unit id="filter.employmentType.all" resname="filter.employmentType.all">
+                <source>All types</source>
+            </trans-unit>
+            <trans-unit id="filter.workplaceType" resname="filter.workplaceType">
+                <source>Workplace</source>
+            </trans-unit>
+            <trans-unit id="filter.workplaceType.all" resname="filter.workplaceType.all">
+                <source>All workplaces</source>
+            </trans-unit>
+            <trans-unit id="filter.submit" resname="filter.submit">
+                <source>Filter</source>
+            </trans-unit>
+            <trans-unit id="filter.reset" resname="filter.reset">
+                <source>Reset</source>
+            </trans-unit>
+            <trans-unit id="filter.live" resname="filter.live">
+                <source>Results update as you type.</source>
+            </trans-unit>
+            <trans-unit id="job.featured" resname="job.featured">
+                <source>Featured</source>
+            </trans-unit>
+            <trans-unit id="job.readMore" resname="job.readMore">
+                <source>View job</source>
+            </trans-unit>
+            <trans-unit id="job.apply" resname="job.apply">
+                <source>Apply now</source>
+            </trans-unit>
+            <trans-unit id="job.back" resname="job.back">
+                <source>Back to all jobs</source>
+            </trans-unit>
+            <trans-unit id="job.requirements" resname="job.requirements">
+                <source>Requirements</source>
+            </trans-unit>
+            <trans-unit id="job.benefits" resname="job.benefits">
+                <source>Benefits</source>
+            </trans-unit>
+            <trans-unit id="job.company" resname="job.company">
+                <source>About the company</source>
+            </trans-unit>
+            <trans-unit id="job.validThrough" resname="job.validThrough">
+                <source>Apply until</source>
+            </trans-unit>
+            <trans-unit id="job.salary" resname="job.salary">
+                <source>Salary</source>
+            </trans-unit>
+            <trans-unit id="job.employmentType.FULL_TIME" resname="job.employmentType.FULL_TIME">
+                <source>Full time</source>
+            </trans-unit>
+            <trans-unit id="job.employmentType.PART_TIME" resname="job.employmentType.PART_TIME">
+                <source>Part time</source>
+            </trans-unit>
+            <trans-unit id="job.employmentType.CONTRACTOR" resname="job.employmentType.CONTRACTOR">
+                <source>Contract</source>
+            </trans-unit>
+            <trans-unit id="job.employmentType.TEMPORARY" resname="job.employmentType.TEMPORARY">
+                <source>Temporary</source>
+            </trans-unit>
+            <trans-unit id="job.employmentType.INTERN" resname="job.employmentType.INTERN">
+                <source>Internship</source>
+            </trans-unit>
+            <trans-unit id="job.workplaceType.ONSITE" resname="job.workplaceType.ONSITE">
+                <source>On-site</source>
+            </trans-unit>
+            <trans-unit id="job.workplaceType.HYBRID" resname="job.workplaceType.HYBRID">
+                <source>Hybrid</source>
+            </trans-unit>
+            <trans-unit id="job.workplaceType.REMOTE" resname="job.workplaceType.REMOTE">
+                <source>Remote</source>
+            </trans-unit>
+            <trans-unit id="job.salaryInterval.YEAR" resname="job.salaryInterval.YEAR">
+                <source>per year</source>
+            </trans-unit>
+            <trans-unit id="job.salaryInterval.MONTH" resname="job.salaryInterval.MONTH">
+                <source>per month</source>
+            </trans-unit>
+            <trans-unit id="job.salaryInterval.HOUR" resname="job.salaryInterval.HOUR">
+                <source>per hour</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,21 @@
+# cat=basic/enable/10; type=boolean; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.notificationsEnabled
+notificationsEnabled = 1
+
+# cat=basic/enable/20; type=boolean; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.mockMode
+mockMode = 1
+
+# cat=mail/10; type=string; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.mailTo
+mailTo = jobs@example.com
+
+# cat=mail/20; type=string; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.mailFrom
+mailFrom = noreply@example.com
+
+# cat=slack/10; type=string; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.slackWebhookUrl
+slackWebhookUrl =
+
+# cat=seo/10; type=string; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.jobPathPrefix
+jobPathPrefix = /jobs
+
+# cat=api/10; type=int+; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.apiStoragePid
+apiStoragePid = 0
+

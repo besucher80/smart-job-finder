@@ -1,0 +1,107 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<h1>Smart Job Finder</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Offene Stellen</p>
+                <p class="display-6 mb-0">{jobCount}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Featured</p>
+                <p class="display-6 mb-0">{featuredCount}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Laufen in 14 Tagen ab</p>
+                <p class="display-6 mb-0">{expiringCount}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Google-Jobs-Score</p>
+                <p class="display-6 mb-0">{averageScore}%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2>Google Jobs Readiness</h2>
+<div class="table-fit mb-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Stelle</th>
+                <th>Ort</th>
+                <th>Score</th>
+                <th>Fehlt</th>
+            </tr>
+        </thead>
+        <tbody>
+            <f:for each="{jobs}" as="job">
+                <tr>
+                    <td>{job.title}</td>
+                    <td>{job.location}</td>
+                    <td>
+                        <strong>{job.googleJobs.score}%</strong>
+                    </td>
+                    <td>
+                        <f:if condition="{job.googleJobs.missing}">
+                            <f:then>
+                                <f:for each="{job.googleJobs.missing}" as="item" iteration="iter">{item}<f:if condition="!{iter.isLast}">, </f:if></f:for>
+                            </f:then>
+                            <f:else>—</f:else>
+                        </f:if>
+                    </td>
+                </tr>
+            </f:for>
+        </tbody>
+    </table>
+</div>
+
+<h2>Notification-Log</h2>
+<p class="text-muted">Mock-Mails und Slack-Payloads, ausgelöst durch <code>JobPublishedEvent</code>.</p>
+<div class="table-fit">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Zeit</th>
+                <th>Kanal</th>
+                <th>Status</th>
+                <th>Stelle</th>
+                <th>Hinweis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <f:if condition="{logs}">
+                <f:then>
+                    <f:for each="{logs}" as="log">
+                        <tr>
+                            <td><f:format.date format="d.m.Y H:i">{log.tstamp}</f:format.date></td>
+                            <td>{log.channel}</td>
+                            <td><span class="badge text-bg-secondary">{log.status}</span></td>
+                            <td>{log.job_title} (#{log.job_uid})</td>
+                            <td>{log.message}</td>
+                        </tr>
+                    </f:for>
+                </f:then>
+                <f:else>
+                    <tr>
+                        <td colspan="5">Noch keine Events. Stelle veröffentlichen oder <code>vendor/bin/typo3 smart-job-finder:notify-test</code> ausführen.</td>
+                    </tr>
+                </f:else>
+            </f:if>
+        </tbody>
+    </table>
+</div>
+</html>

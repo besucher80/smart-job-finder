@@ -1,0 +1,41 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<article class="job-card{f:if(condition: job.featured, then: ' job-card--featured')}">
+    <f:if condition="{job.featured}">
+        <span class="job-finder__badge"><f:translate key="job.featured"/></span>
+    </f:if>
+    <h3 class="job-card__title">
+        <f:if condition="{settings.detailPid}">
+            <f:then>
+                <f:link.action action="show" arguments="{job: job}" pageUid="{settings.detailPid}">{job.title}</f:link.action>
+            </f:then>
+            <f:else>
+                <f:link.action action="show" arguments="{job: job}">{job.title}</f:link.action>
+            </f:else>
+        </f:if>
+    </h3>
+    <p class="job-card__meta">
+        <f:if condition="{companyNames.{job.uid}}">{companyNames.{job.uid}} · </f:if>
+        <f:if condition="{job.location}">{job.location} · </f:if>
+        <f:translate key="job.employmentType.{job.employmentType}"/>
+        ·
+        <f:translate key="job.workplaceType.{job.workplaceType}"/>
+    </p>
+    <f:if condition="{job.teaser}">
+        <p class="job-card__teaser">{job.teaser}</p>
+    </f:if>
+    <p class="job-card__cta">
+        <f:if condition="{settings.detailPid}">
+            <f:then>
+                <f:link.action action="show" arguments="{job: job}" pageUid="{settings.detailPid}" class="job-finder__apply job-finder__apply--ghost">
+                    <f:translate key="job.readMore"/>
+                </f:link.action>
+            </f:then>
+            <f:else>
+                <f:link.action action="show" arguments="{job: job}" class="job-finder__apply job-finder__apply--ghost">
+                    <f:translate key="job.readMore"/>
+                </f:link.action>
+            </f:else>
+        </f:if>
+    </p>
+</article>
+</html>

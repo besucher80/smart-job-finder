@@ -1,0 +1,37 @@
+plugin.tx_smartjobfinder_joblist {
+  view {
+    templateRootPaths {
+      0 = EXT:smart_job_finder/Resources/Private/Templates/
+      10 = {$plugin.tx_smartjobfinder_joblist.view.templateRootPath}
+    }
+    partialRootPaths {
+      0 = EXT:smart_job_finder/Resources/Private/Partials/
+      10 = {$plugin.tx_smartjobfinder_joblist.view.partialRootPath}
+    }
+    layoutRootPaths {
+      0 = EXT:smart_job_finder/Resources/Private/Layouts/
+      10 = {$plugin.tx_smartjobfinder_joblist.view.layoutRootPath}
+    }
+  }
+  persistence {
+    storagePid = {$plugin.tx_smartjobfinder_joblist.persistence.storagePid}
+  }
+  settings {
+    itemsPerPage = {$plugin.tx_smartjobfinder_joblist.settings.itemsPerPage}
+    detailPid = {$plugin.tx_smartjobfinder_joblist.settings.detailPid}
+    enableLiveFilter = {$plugin.tx_smartjobfinder_joblist.settings.enableLiveFilter}
+  }
+  features {
+    skipDefaultArguments = 1
+  }
+}
+
+# Keep plugin settings available when the CType is rendered as content element.
+tt_content.smartjobfinder_joblist.settings < plugin.tx_smartjobfinder_joblist.settings
+
+config.pageTitleProviders {
+  smartJobFinder {
+    provider = Agentur\SmartJobFinder\Seo\JobPageTitleProvider
+    before = record
+  }
+}

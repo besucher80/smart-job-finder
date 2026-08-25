@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
+        <header/>
+        <body>
+            <trans-unit id="extconf.notificationsEnabled" resname="extconf.notificationsEnabled">
+                <source>Enable publish notifications (mail + Slack)</source>
+                <target>Benachrichtigungen bei Veröffentlichung aktivieren (Mail + Slack)</target>
+            </trans-unit>
+            <trans-unit id="extconf.mockMode" resname="extconf.mockMode">
+                <source>Mock mode: log mail and Slack payload, do not send</source>
+                <target>Mock-Modus: Mail und Slack-Payload nur loggen, nicht senden</target>
+            </trans-unit>
+            <trans-unit id="extconf.mailTo" resname="extconf.mailTo">
+                <source>Notification recipient (used when mock mode is off)</source>
+                <target>Empfänger (nur wenn Mock-Modus aus ist)</target>
+            </trans-unit>
+            <trans-unit id="extconf.mailFrom" resname="extconf.mailFrom">
+                <source>From address</source>
+                <target>Absenderadresse</target>
+            </trans-unit>
+            <trans-unit id="extconf.slackWebhookUrl" resname="extconf.slackWebhookUrl">
+                <source>Slack incoming webhook URL</source>
+                <target>Slack Incoming-Webhook-URL</target>
+            </trans-unit>
+            <trans-unit id="extconf.jobPathPrefix" resname="extconf.jobPathPrefix">
+                <source>Public job path prefix used for slug redirects (e.g. /jobs)</source>
+                <target>Pfad-Prefix für Slug-Redirects (z. B. /jobs)</target>
+            </trans-unit>
+            <trans-unit id="extconf.apiStoragePid" resname="extconf.apiStoragePid">
+                <source>Storage PID for /api/jobs (0 = all pages)</source>
+                <target>Storage-PID für /api/jobs (0 = alle Seiten)</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
