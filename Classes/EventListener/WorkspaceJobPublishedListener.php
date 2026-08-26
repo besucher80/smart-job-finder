@@ -6,6 +6,7 @@ namespace Agentur\SmartJobFinder\EventListener;
 
 use Agentur\SmartJobFinder\Domain\JobVisibility;
 use Agentur\SmartJobFinder\Event\JobPublishedEvent;
+use Agentur\SmartJobFinder\Event\JobUnpublishedEvent;
 use Agentur\SmartJobFinder\Service\SlugRedirectWriter;
 use Agentur\SmartJobFinder\Workspaces\LiveRecordSnapshot;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -44,9 +45,6 @@ final class WorkspaceJobPublishedListener
         $workspaceId = (int)call_user_func([$event, 'getWorkspaceId']);
         $before = $this->liveRecordSnapshot->pull($uid);
         $record = BackendUtility::getRecord(self::TABLE, $uid) ?? [];
-        if ($record === []) {
-            return;
-        }
 
         $oldSlug = (string)($before['slug'] ?? '');
         $newSlug = (string)($record['slug'] ?? '');
@@ -54,18 +52,32 @@ final class WorkspaceJobPublishedListener
             $this->slugRedirectWriter->create($oldSlug, $newSlug, $uid);
         }
 
-        if (!JobVisibility::isPubliclyVisible($record)) {
+        $wasVisible = LiveRecordSnapshot::wasPubliclyVisible($before);
+        $nowVisible = $record !== [] && JobVisibility::isPubliclyVisible($record);
+
+        if ($nowVisible) {
+            $this->eventDispatcher->dispatch(
+                new JobPublishedEvent(
+                    $uid,
+                    $record,
+                    LiveRecordSnapshot::publicationStatus($before),
+                    'workspace',
+                    $workspaceId,
+                ),
+            );
             return;
         }
 
-        $this->eventDispatcher->dispatch(
-            new JobPublishedEvent(
-                $uid,
-                $record,
-                LiveRecordSnapshot::publicationStatus($before),
-                'workspace',
-                $workspaceId,
-            ),
-        );
+        if ($wasVisible) {
+            $this->eventDispatcher->dispatch(
+                new JobUnpublishedEvent(
+                    $uid,
+                    $record !== [] ? $record : ($before ?? []),
+                    'workspace',
+                    'workspace',
+                    $workspaceId,
+                ),
+            );
+        }
     }
 }

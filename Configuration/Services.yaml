@@ -6,7 +6,9 @@ services:
 
   Agentur\SmartJobFinder\:
     resource: '../Classes/*'
-    exclude: '../Classes/Domain/Model/*'
+    exclude:
+      - '../Classes/Domain/Model/*'
+      - '../Classes/Seo/JobXmlSitemapDataProvider.php'
 
   Agentur\SmartJobFinder\Hook\JobPublishDataHandlerHook:
     public: true
@@ -24,7 +26,12 @@ services:
     tags:
       - name: event.listener
         identifier: 'smart-job-finder/flush-job-cache'
+        method: onPublished
         event: Agentur\SmartJobFinder\Event\JobPublishedEvent
+      - name: event.listener
+        identifier: 'smart-job-finder/flush-job-cache-unpublished'
+        method: onUnpublished
+        event: Agentur\SmartJobFinder\Event\JobUnpublishedEvent
 
   Agentur\SmartJobFinder\EventListener\WorkspaceJobPublishedListener:
     tags:

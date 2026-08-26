@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Middleware;
 
+use Agentur\SmartJobFinder\Domain\JobLanguageOverlay;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -63,7 +64,8 @@ final class JobApiMiddleware implements MiddlewareInterface
             );
         }
 
-        $cacheIdentifier = 'api_' . md5($storagePid . '_' . $languageId);
+        $strict = $this->isStrictLanguage($request);
+        $cacheIdentifier = 'api_' . md5($storagePid . '_' . $languageId . '_' . ($strict ? '1' : '0'));
         $cache = $this->cacheManager->hasCache('smart_job_finder')
             ? $this->cacheManager->getCache('smart_job_finder')
             : null;
@@ -76,7 +78,7 @@ final class JobApiMiddleware implements MiddlewareInterface
             }
         }
 
-        $payload = $this->buildPayload($storagePid, $languageId);
+        $payload = $this->buildPayload($storagePid, $languageId, $strict);
         $cache?->set($cacheIdentifier, $payload, ['tx_smartjobfinder'], 60);
         $headers['X-Smart-Job-Finder-Cache'] = 'miss';
 
@@ -86,16 +88,33 @@ final class JobApiMiddleware implements MiddlewareInterface
     /**
      * @return array<string, mixed>
      */
-    private function buildPayload(int $storagePid, int $languageId): array
+    private function buildPayload(int $storagePid, int $languageId, bool $strict): array
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_smartjobfinder_domain_model_job');
+        $languages = [-1, 0];
+        if ($languageId > 0) {
+            $languages[] = $languageId;
+        }
+
         $queryBuilder
-            ->select('uid', 'title', 'slug', 'teaser', 'location', 'employment_type', 'workplace_type', 'featured', 'crdate')
+            ->select(
+                'uid',
+                'title',
+                'slug',
+                'teaser',
+                'location',
+                'employment_type',
+                'workplace_type',
+                'featured',
+                'crdate',
+                'sys_language_uid',
+                'l10n_parent',
+            )
             ->from('tx_smartjobfinder_domain_model_job')
             ->andWhere(
                 $queryBuilder->expr()->in(
                     'sys_language_uid',
-                    implode(',', [-1, $languageId]),
+                    implode(',', $languages),
                 ),
                 $queryBuilder->expr()->or(
                     $queryBuilder->expr()->eq('valid_through', $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)),
@@ -104,7 +123,7 @@ final class JobApiMiddleware implements MiddlewareInterface
             )
             ->orderBy('featured', 'DESC')
             ->addOrderBy('crdate', 'DESC')
-            ->setMaxResults(self::LIMIT);
+            ->setMaxResults(self::LIMIT * 3);
 
         if ($storagePid > 0) {
             $queryBuilder->andWhere(
@@ -113,7 +132,10 @@ final class JobApiMiddleware implements MiddlewareInterface
         }
 
         $jobs = [];
-        foreach ($queryBuilder->executeQuery()->fetchAllAssociative() as $row) {
+        foreach (JobLanguageOverlay::overlay($queryBuilder->executeQuery()->fetchAllAssociative(), $languageId, $strict) as $row) {
+            if (count($jobs) >= self::LIMIT) {
+                break;
+            }
             $jobs[] = [
                 'uid' => (int)$row['uid'],
                 'title' => (string)$row['title'],
@@ -145,5 +167,15 @@ final class JobApiMiddleware implements MiddlewareInterface
         }
 
         return 0;
+    }
+
+    private function isStrictLanguage(ServerRequestInterface $request): bool
+    {
+        $language = $request->getAttribute('language');
+        if (!is_object($language) || !method_exists($language, 'getFallbackType')) {
+            return false;
+        }
+
+        return (string)$language->getFallbackType() === 'strict';
     }
 }

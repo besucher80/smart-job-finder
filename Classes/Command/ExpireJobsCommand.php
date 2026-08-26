@@ -38,6 +38,7 @@ final class ExpireJobsCommand extends Command
             )
             ->executeStatement();
 
+        // Bulk hide: one list-tag flush instead of N JobUnpublishedEvents.
         if ($affected > 0) {
             $this->cacheManager->flushCachesByTag('tx_smartjobfinder');
         }

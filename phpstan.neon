@@ -1,0 +1,10 @@
+parameters:
+  level: 6
+  paths:
+    - Classes/Domain/JobVisibility.php
+    - Classes/Domain/JobLanguageOverlay.php
+    - Classes/Event
+    - Classes/Workspaces
+    - Classes/Notification/NotificationResult.php
+    - Classes/Notification/SlackWebhookUrl.php
+    - Classes/Seo/GoogleJobsReadiness.php

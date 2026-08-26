@@ -35,3 +35,26 @@ config.pageTitleProviders {
     before = record
   }
 }
+
+# Used only when EXT:seo is loaded. detailPid + storagePid must be set.
+plugin.tx_seo.config.xmlSitemap.sitemaps.jobs {
+  provider = Agentur\SmartJobFinder\Seo\JobXmlSitemapDataProvider
+  config {
+    table = tx_smartjobfinder_domain_model_job
+    pid = {$plugin.tx_smartjobfinder_joblist.persistence.storagePid}
+    lastModifiedField = tstamp
+    sortField = tstamp
+    url {
+      pageId = {$plugin.tx_smartjobfinder_joblist.settings.detailPid}
+      fieldToParameterMap {
+        uid = tx_smartjobfinder_joblist[job]
+      }
+      additionalGetParameters {
+        tx_smartjobfinder_joblist {
+          controller = Job
+          action = show
+        }
+      }
+    }
+  }
+}

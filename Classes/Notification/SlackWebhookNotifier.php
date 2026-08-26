@@ -41,17 +41,50 @@ final class SlackWebhookNotifier implements JobNotifierInterface
             );
         }
 
-        $this->requestFactory->request($webhookUrl, 'POST', [
-            'headers' => [
-                'Content-Type' => 'application/json; charset=utf-8',
-            ],
-            'body' => $json,
-            'timeout' => 5,
-            'http_errors' => false,
-        ]);
+        if (!SlackWebhookUrl::isAllowed($webhookUrl)) {
+            $this->logger->error('Slack webhook URL is not an https hooks.slack.com endpoint.', [
+                'jobUid' => $event->getUid(),
+            ]);
+
+            return new NotificationResult(
+                'slack',
+                'failed',
+                $json,
+                'Webhook URL rejected (https hooks.slack.com only)',
+            );
+        }
+
+        try {
+            $response = $this->requestFactory->request($webhookUrl, 'POST', [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => $json,
+                'timeout' => 5,
+                'http_errors' => false,
+            ]);
+        } catch (\Throwable $exception) {
+            $this->logger->error('Slack webhook request failed.', [
+                'jobUid' => $event->getUid(),
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return new NotificationResult('slack', 'failed', $json, $exception->getMessage());
+        }
+
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            $this->logger->error('Slack webhook returned a non-success status.', [
+                'jobUid' => $event->getUid(),
+                'status' => $statusCode,
+            ]);
+
+            return new NotificationResult('slack', 'failed', $json, 'HTTP ' . $statusCode);
+        }
 
         $this->logger->info('Slack webhook posted for published job.', [
             'jobUid' => $event->getUid(),
+            'status' => $statusCode,
         ]);
 
         return new NotificationResult('slack', 'sent', $json, 'Posted to Slack');

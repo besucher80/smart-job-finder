@@ -17,4 +17,9 @@ final class NotificationResult
     {
         return $this->status === 'mock';
     }
+
+    public function isFailed(): bool
+    {
+        return $this->status === 'failed';
+    }
 }

@@ -49,4 +49,21 @@ final class LiveRecordSnapshotTest extends TestCase
         self::assertSame('old-slug', $snapshot->pull(9)['slug'] ?? null);
         self::assertNull($snapshot->pull(9));
     }
+
+    public function testWasPubliclyVisibleUsesJobVisibility(): void
+    {
+        self::assertTrue(LiveRecordSnapshot::wasPubliclyVisible([
+            'slug' => 'live-job',
+            't3ver_state' => 0,
+            'hidden' => 0,
+            'deleted' => 0,
+            'starttime' => 0,
+            'endtime' => 0,
+            'valid_through' => 0,
+        ], 1_700_000_000));
+        self::assertFalse(LiveRecordSnapshot::wasPubliclyVisible([
+            'hidden' => 1,
+        ], 1_700_000_000));
+        self::assertFalse(LiveRecordSnapshot::wasPubliclyVisible(null));
+    }
 }

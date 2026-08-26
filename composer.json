@@ -24,10 +24,19 @@
         "typo3/cms-fluid": "^12.4 || ^13.4 || ^14.0",
         "typo3/cms-frontend": "^12.4 || ^13.4 || ^14.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^1.12"
+    },
     "suggest": {
         "typo3/cms-redirects": "Creates 301 redirects when a job slug changes",
         "typo3/cms-scheduler": "Run smart-job-finder:expire as a recurring task",
-        "typo3/cms-workspaces": "Dispatches JobPublishedEvent when a workspace job is published to live"
+        "typo3/cms-workspaces": "Dispatches JobPublishedEvent when a workspace job is published to live",
+        "typo3/cms-seo": "XML sitemap of public jobs (JobXmlSitemapDataProvider)"
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml.dist",
+        "phpstan": "phpstan analyse -c phpstan.neon --memory-limit=512M"
     },
     "autoload": {
         "psr-4": {

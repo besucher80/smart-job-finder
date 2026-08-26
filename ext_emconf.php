@@ -16,6 +16,7 @@ $EM_CONF[$_EXTKEY] = [
         'suggests' => [
             'workspaces' => '',
             'redirects' => '',
+            'seo' => '',
         ],
     ],
 ];

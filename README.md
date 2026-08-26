@@ -12,10 +12,13 @@ flowchart LR
   Hook -->|cmdmap snapshot| Snap[LiveRecordSnapshot]
   WS[EXT:workspaces Publish] -->|AfterRecordPublishedEvent| WsL[WorkspaceJobPublishedListener]
   Snap --> WsL
-  Hook -->|dispatch| Event[JobPublishedEvent]
-  WsL -->|dispatch| Event
+  Hook -->|sichtbar| Event[JobPublishedEvent]
+  Hook -->|unsichtbar| Unpub[JobUnpublishedEvent]
+  WsL -->|sichtbar| Event
+  WsL -->|unsichtbar| Unpub
   Event --> Listener[JobPublishedNotificationListener]
   Event --> Cache[FlushJobCacheListener]
+  Unpub --> Cache
   Listener --> Mail[FluidEmail / Mock]
   Listener --> Slack[SlackWebhookNotifier]
   Listener --> Log[Notification-Log im BE-Modul]
@@ -25,9 +28,10 @@ flowchart LR
   FE --> JsonLd[JobPosting JSON-LD]
   FE --> Seo[PageTitle + Open Graph]
   API[PSR-15 /api/jobs] --> JSON[JSON Feed]
+  SEO[EXT:seo] --> Sitemap[Job XML-Sitemap]
 ```
 
-Der DataHandler hat in TYPO3 12–14 kein generisches „Record published“-PSR-14-Event. Der Hook ist deshalb nur die Brücke für **Live**-Änderungen. Workspace-Entwürfe bleiben still; erst `AfterRecordPublishedEvent` (EXT:workspaces, ab TYPO3 12.2) dispatched `JobPublishedEvent`. Mail, Slack, Cache-Flush und Log hängen am Event — nicht am Hook.
+Der DataHandler hat in TYPO3 12–14 kein generisches „Record published“-PSR-14-Event. Der Hook ist deshalb nur die Brücke für **Live**-Änderungen. Workspace-Entwürfe bleiben still; erst `AfterRecordPublishedEvent` (EXT:workspaces, ab TYPO3 12.2) dispatched `JobPublishedEvent` oder `JobUnpublishedEvent`. Mail und Slack hängen nur am Publish-Event. Cache-Flush hängt an beiden — sonst bleibt eine versteckte Stelle in der gecachten Liste.
 
 ## Installation
 
@@ -69,7 +73,9 @@ Danach:
 | Modul | Web → Job Finder: Kennzahlen, Google-Jobs-Score, Notification-Log |
 | Preview | Page-Modul zeigt Stellenzahl und Live-Filter-Status |
 
-Eine Stelle gilt als **veröffentlicht**, wenn sie im Live-Workspace neu und nicht versteckt angelegt wird, `hidden` von 1 auf 0 wechselt (Glühbirne), oder wenn ein Workspace-Entwurf nach Live **published** wird (`EXT:workspaces`). Reine Workspace-Saves lösen keine Mail/Slack aus.
+Eine Stelle gilt als **veröffentlicht**, wenn sie im Live-Workspace neu und FE-sichtbar wird, `hidden` von 1 auf 0 wechselt (Glühbirne), oder wenn ein Workspace-Entwurf nach Live **published** wird (`EXT:workspaces`). Reine Workspace-Saves lösen keine Mail/Slack aus.
+
+Verstecken, Löschen oder ein Workspace-Delete-Placeholder nach Live dispatched `JobUnpublishedEvent` und leert dieselben Cache-Tags. Mail/Slack bleiben still.
 
 ## Frontend
 
@@ -77,8 +83,9 @@ Eine Stelle gilt als **veröffentlicht**, wenn sie im Live-Workspace neu und nic
 - Live-Filter (Suche, Ort, Anstellungsart, Arbeitsmodell) per `fetch`, ohne JavaScript als GET-Formular
 - Detailseite mit schema.org **JobPosting** JSON-LD, **PageTitleProvider** und Open-Graph-Meta
 - Listenansicht zusätzlich mit **ItemList** JSON-LD
-- Cache-Tags `tx_smartjobfinder` / `tx_smartjobfinder_job_{uid}` — Flush bei Veröffentlichung
+- Cache-Tags `tx_smartjobfinder` / `tx_smartjobfinder_job_{uid}` — Flush bei Publish **und** Unpublish
 - Featured-Stellen stehen oben
+- `EXT:seo`: Sitemap `jobs` (öffentliche Stellen, ohne abgelaufenes `valid_through`). `storagePid` und `detailPid` im TypoScript setzen
 
 Route Enhancer (in die Site-Config übernehmen): siehe [`Documentation/route-enhancer.yaml`](Documentation/route-enhancer.yaml). Danach z. B. `/jobs/typo3-integrator`.
 
@@ -88,7 +95,9 @@ Slug-Wechsel schreibt bei geladenem `EXT:redirects` einen 301 von `/jobs/alter-s
 
 `GET /api/jobs` (auch unter `/de/api/jobs`) liefert einen JSON-Feed, **bevor** TYPO3 die Seite auflöst (PSR-15 Middleware).
 
-Ohne gesetztes `apiStoragePid` antwortet die API mit **403** — sie listet nicht alle Jobs der Instanz. Abgelaufene `valid_through`-Stellen erscheinen weder in Liste, Detail (404) noch API, auch wenn der Scheduler noch nicht gelaufen ist.
+Ohne gesetztes `apiStoragePid` antwortet die API mit **403** — sie listet nicht alle Jobs der Instanz. Abgelaufene `valid_through`-Stellen erscheinen weder in Liste, Detail (404), API noch Sitemap, auch wenn der Scheduler noch nicht gelaufen ist.
+
+Übersetzungen: die API overlayed wie TYPO3 (Übersetzung gewinnt, Default als Fallback). Site-Language `strict` liefert nur vorhandene Übersetzungen.
 
 Slug-Wechsel schreibt den Redirect **und** baut den Redirect-Cache von `EXT:redirects` neu. Ein reines `INSERT` würde sonst erst nach Cache-Flush greifen.
 
@@ -101,7 +110,7 @@ Einstellungen unter **Admin Tools → Settings → Extension Configuration → s
 | `notificationsEnabled` | an | Listener aktiv |
 | `mockMode` | an | Kein echter Versand: Payload im Log + BE-Modul |
 | `mailTo` / `mailFrom` | Beispieladressen | Wird nur ohne Mock-Modus genutzt (FluidEmail) |
-| `slackWebhookUrl` | leer | Incoming Webhook; nur ohne Mock-Modus |
+| `slackWebhookUrl` | leer | Incoming Webhook; nur `https://hooks.slack.com/…`, nur 2xx gilt als Erfolg |
 | `jobPathPrefix` | `/jobs` | Prefix für Slug-Redirects |
 | `apiStoragePid` | `0` | Pflicht für `/api/jobs` (sonst 403, kein Instanz-Leak) |
 
@@ -112,7 +121,7 @@ vendor/bin/typo3 smart-job-finder:notify-test
 vendor/bin/typo3 smart-job-finder:expire
 ```
 
-`expire` ist schedulable (Scheduler-Task) und setzt `hidden=1` bei abgelaufenem `valid_through`.
+`expire` ist schedulable (Scheduler-Task), setzt `hidden=1` bei abgelaufenem `valid_through` und flusht den Listen-Cache einmal (kein Event pro Zeile).
 
 Workspace-Publish (`EXT:workspaces`, optional): `JobPublishedEvent` bekommt `source=workspace` und die Workspace-ID. IRRE-Kinder (Requirements/Benefits) lösen das Event nicht aus — nur die Job-Tabelle. Ohne Workspaces startet die Extension unverändert.
 
@@ -120,10 +129,11 @@ Eigene Reaktion auf Veröffentlichung:
 
 ```php
 use Agentur\SmartJobFinder\Event\JobPublishedEvent;
+use Agentur\SmartJobFinder\Event\JobUnpublishedEvent;
 
-public function __invoke(JobPublishedEvent $event): void
+public function __invoke(JobPublishedEvent|JobUnpublishedEvent $event): void
 {
-    // $event->getUid(), getTitle(), getRecord(), getSource(), getWorkspaceId() …
+    // $event->getUid(), getTitle(), getRecord() …
 }
 ```
 
@@ -131,7 +141,8 @@ public function __invoke(JobPublishedEvent $event): void
 
 - Plugin-Registrierung als CType; fünfter `configurePlugin`-Parameter nur, wenn die Core-API ihn noch kennt
 - Event-Listener per Services.yaml-Tag (nicht nur `#[AsEventListener]`, das reicht erst ab v13)
-- Workspace-Publish über `AfterRecordPublishedEvent` (Core ab 12.2); ohne `EXT:workspaces` startet die Extension trotzdem
+- Workspace-Publish über `AfterRecordPublishedEvent` (Core ab 12.2); Delete-Placeholder wird zum Unpublish; ohne `EXT:workspaces` startet die Extension trotzdem
+- XML-Sitemap nur mit `EXT:seo` (TypoScript-Config ist sonst wirkungslos)
 - Cache-Tags: `AddCacheTagEvent` ab v13, sonst `TSFE->addCacheTags()`
 - `ext_tables.sql` bleibt für v12 die Schema-Quelle; v13/14 generieren ergänzend aus TCA
 - Site Set für v13/14, Static TypoScript für v12
@@ -149,7 +160,7 @@ Weitere Entscheidungen:
 | N+1 | Firmennamen per einem JOIN, Kategorien nicht in der Liste |
 | Dropdown-Orte | `SELECT DISTINCT`, keine hydrierten Models |
 | Suche | MySQL `FULLTEXT` / `MATCH AGAINST`, sonst `LIKE` |
-| `/api/jobs` | getaggter Cache 60s, Limit 100, Language + Enable Fields |
+| `/api/jobs` | getaggter Cache 60s, Limit 100, Language-Overlay + Enable Fields |
 | Notification-Log | `expire` löscht Einträge älter als 90 Tage |
 
 `FULLTEXT` in `ext_tables.sql` ist MySQL/MariaDB. PostgreSQL: Index weglassen, der Code fällt auf LIKE zurück.
@@ -157,7 +168,15 @@ Weitere Entscheidungen:
 ## Tests
 
 ```bash
-vendor/bin/phpunit -c phpunit.xml.dist
+composer test
+composer phpstan
 ```
 
-Die Unit-Tests für Event, JSON-LD-Encoding und Google-Jobs-Score brauchen kein vollständiges TYPO3. Der Slack-Payload-Test wird übersprungen, wenn Core-Klassen fehlen.
+Oder ohne Composer-Vendor der Extension (CI macht das so):
+
+```bash
+phpunit -c phpunit.xml.dist
+phpstan analyse -c phpstan.neon --memory-limit=512M
+```
+
+Die Unit-Tests für Event, Overlay, Visibility, Slack-URL und Google-Jobs-Score brauchen kein vollständiges TYPO3. Der Slack-Payload-Test wird übersprungen, wenn Core-Klassen fehlen. GitHub Actions läuft PHP 8.1 und 8.3.

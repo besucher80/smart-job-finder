@@ -6,6 +6,7 @@ namespace Agentur\SmartJobFinder\Hook;
 
 use Agentur\SmartJobFinder\Domain\JobVisibility;
 use Agentur\SmartJobFinder\Event\JobPublishedEvent;
+use Agentur\SmartJobFinder\Event\JobUnpublishedEvent;
 use Agentur\SmartJobFinder\Service\SlugRedirectWriter;
 use Agentur\SmartJobFinder\Workspaces\LiveRecordSnapshot;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -14,8 +15,8 @@ use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 /**
  * DataHandler still has no generic PSR-14 "record saved" event in TYPO3 12–14.
- * This hook is the official integration point; it translates a real publication
- * into {@see JobPublishedEvent} so domain listeners stay hook-free.
+ * This hook is the official integration point; it translates a real visibility
+ * change into domain events so listeners stay hook-free.
  *
  * Workspace drafts never dispatch from datamap. Publish-to-live is handled by
  * {@see \Agentur\SmartJobFinder\EventListener\WorkspaceJobPublishedListener}
@@ -29,6 +30,11 @@ final class JobPublishDataHandlerHook
      * @var array<int, string>
      */
     private array $slugBefore = [];
+
+    /**
+     * @var array<int, bool>
+     */
+    private array $visibleBefore = [];
 
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -46,12 +52,20 @@ final class JobPublishDataHandlerHook
         $id,
         DataHandler $dataHandler,
     ): void {
-        if ($table !== self::TABLE || !is_numeric($id) || !array_key_exists('slug', $fieldArray)) {
+        if ($table !== self::TABLE || !is_numeric($id)) {
             return;
         }
 
-        $current = BackendUtility::getRecord(self::TABLE, (int)$id, 'slug');
-        $this->slugBefore[(int)$id] = (string)($current['slug'] ?? '');
+        $uid = (int)$id;
+        $current = BackendUtility::getRecord(self::TABLE, $uid) ?? [];
+        if ($current === []) {
+            return;
+        }
+
+        $this->visibleBefore[$uid] = JobVisibility::isPubliclyVisible($current);
+        if (array_key_exists('slug', $fieldArray)) {
+            $this->slugBefore[$uid] = (string)($current['slug'] ?? '');
+        }
     }
 
     /**
@@ -82,18 +96,22 @@ final class JobPublishDataHandlerHook
             $this->slugRedirectWriter->create($this->slugBefore[$uid], (string)$fieldArray['slug'], $uid);
         }
 
-        if (!$this->isPublication($status, $fieldArray)) {
-            return;
-        }
-
         $record = BackendUtility::getRecord(self::TABLE, $uid) ?? [];
-        if ($record === [] || !JobVisibility::isPubliclyVisible($record)) {
+        $wasVisible = $this->visibleBefore[$uid] ?? false;
+        $nowVisible = $record !== [] && JobVisibility::isPubliclyVisible($record);
+
+        if ($nowVisible && !$wasVisible) {
+            $this->eventDispatcher->dispatch(
+                new JobPublishedEvent($uid, $record, $status === 'new' ? 'new' : 'update', 'live'),
+            );
             return;
         }
 
-        $this->eventDispatcher->dispatch(
-            new JobPublishedEvent($uid, $record, $status, 'live'),
-        );
+        if ($wasVisible && !$nowVisible) {
+            $this->eventDispatcher->dispatch(
+                new JobUnpublishedEvent($uid, $record !== [] ? $record : ['title' => ''], 'hidden', 'live'),
+            );
+        }
     }
 
     /**
@@ -126,18 +144,34 @@ final class JobPublishDataHandlerHook
     }
 
     /**
-     * @param array<string, mixed> $fieldArray
+     * Live delete of a public job must drop the page cache. Workspace deletes stay silent.
      */
-    private function isPublication(string $status, array $fieldArray): bool
+    public function processCmdmap_deleteAction(...$args): void
     {
-        if ($status === 'new') {
-            return (int)($fieldArray['hidden'] ?? 0) === 0;
+        $table = (string)($args[0] ?? '');
+        $id = $args[1] ?? 0;
+        $recordToDelete = is_array($args[2] ?? null) ? $args[2] : [];
+        $dataHandler = $args[4] ?? null;
+
+        if ($table !== self::TABLE || !is_numeric($id) || $recordToDelete === []) {
+            return;
         }
 
-        if ($status === 'update' && array_key_exists('hidden', $fieldArray)) {
-            return (int)$fieldArray['hidden'] === 0;
+        $workspace = 0;
+        if (is_object($dataHandler) && isset($dataHandler->BE_USER)) {
+            $workspace = (int)($dataHandler->BE_USER->workspace ?? 0);
+        }
+        if ($workspace > 0) {
+            return;
         }
 
-        return false;
+        if (!JobVisibility::isPubliclyVisible($recordToDelete)) {
+            return;
+        }
+
+        $uid = (int)$id;
+        $this->eventDispatcher->dispatch(
+            new JobUnpublishedEvent($uid, $recordToDelete, 'deleted', 'live'),
+        );
     }
 }
