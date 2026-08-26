@@ -7,84 +7,48 @@
         <f:asset.css identifier="smart-job-apply" href="EXT:smart_job_apply/Resources/Public/Css/apply.css"/>
     </f:if>
 
-    <article class="job-finder job-finder--detail{f:if(condition: job.featured, then: ' job-finder--featured')}" itemscope itemtype="https://schema.org/JobPosting">
+    <article class="job-finder job-finder--board job-finder--detail{f:if(condition: job.featured, then: ' job-finder--featured')}" itemscope itemtype="https://schema.org/JobPosting">
         <p class="job-finder__back">
             <f:link.action action="list" class="job-finder__back-link">
-                ← <f:translate key="job.back"/>
+                <f:translate key="job.back"/>
             </f:link.action>
         </p>
 
-        <header class="job-finder__hero">
-            <f:if condition="{job.featured}">
-                <span class="job-finder__badge"><f:translate key="job.featured"/></span>
-            </f:if>
-            <h1 class="job-finder__title" itemprop="title">{job.title}</h1>
-            <ul class="job-finder__meta">
-                <f:if condition="{job.company}">
-                    <li>{job.company.name}</li>
-                </f:if>
-                <f:if condition="{job.location}">
-                    <li>{job.location}</li>
-                </f:if>
-                <li><f:translate key="job.employmentType.{job.employmentType}"/></li>
-                <li><f:translate key="job.workplaceType.{job.workplaceType}"/></li>
-                <f:if condition="{job.department}">
-                    <li>{job.department}</li>
-                </f:if>
-            </ul>
-            <f:if condition="{job.categories}">
-                <ul class="job-finder__tags">
-                    <f:for each="{job.categories}" as="category">
-                        <li>{category.title}</li>
-                    </f:for>
-                </ul>
-            </f:if>
-            <f:if condition="{job.teaser}">
-                <p class="job-finder__lead">{job.teaser}</p>
-            </f:if>
-            <f:render partial="Job/ApplyCta" arguments="{job: job}"/>
-        </header>
-
         <div class="job-finder__layout">
-            <div class="job-finder__main">
-                <div class="job-finder__body" itemprop="description">
-                    <f:format.html>{job.description}</f:format.html>
+            <header class="job-finder__masthead">
+                <div class="job-finder__hero-top">
+                    <p class="job-finder__kicker">
+                        <f:if condition="{job.company}">
+                            <f:then>{job.company.name}</f:then>
+                            <f:else><f:translate key="job.kicker"/></f:else>
+                        </f:if>
+                    </p>
+                    <f:if condition="{job.featured}">
+                        <span class="job-finder__badge"><f:translate key="job.featured"/></span>
+                    </f:if>
                 </div>
-
-                <f:if condition="{job.requirements}">
-                    <section class="job-finder__block">
-                        <h2><f:translate key="job.requirements"/></h2>
-                        <ul class="job-finder__requirements">
-                            <f:for each="{job.requirements}" as="requirement">
-                                <li>
-                                    <strong>{requirement.title}</strong>
-                                    <f:if condition="{requirement.description}">
-                                        <span>{requirement.description}</span>
-                                    </f:if>
-                                </li>
-                            </f:for>
-                        </ul>
-                    </section>
+                <h1 class="job-finder__title" itemprop="title">{job.title}</h1>
+                <p class="job-finder__byline">
+                    <f:if condition="{job.location}">
+                        <span>{job.location}</span>
+                    </f:if>
+                    <span><f:translate key="job.employmentType.{job.employmentType}"/></span>
+                    <span><f:translate key="job.workplaceType.{job.workplaceType}"/></span>
+                    <f:if condition="{job.department}">
+                        <span>{job.department}</span>
+                    </f:if>
+                </p>
+                <f:if condition="{job.categories}">
+                    <ul class="job-finder__tags">
+                        <f:for each="{job.categories}" as="category">
+                            <li>{category.title}</li>
+                        </f:for>
+                    </ul>
                 </f:if>
-
-                <f:if condition="{job.benefits}">
-                    <section class="job-finder__block">
-                        <h2><f:translate key="job.benefits"/></h2>
-                        <ul class="job-finder__chips">
-                            <f:for each="{job.benefits}" as="benefit">
-                                <li title="{benefit.description}">{benefit.title}</li>
-                            </f:for>
-                        </ul>
-                    </section>
+                <f:if condition="{job.teaser}">
+                    <p class="job-finder__lead">{job.teaser}</p>
                 </f:if>
-
-                <f:if condition="{job.company.description}">
-                    <section class="job-finder__company">
-                        <h2><f:translate key="job.company"/></h2>
-                        <f:format.html>{job.company.description}</f:format.html>
-                    </section>
-                </f:if>
-            </div>
+            </header>
 
             <aside class="job-finder__aside">
                 <p class="job-finder__aside-label"><f:translate key="job.overview"/></p>
@@ -138,35 +102,77 @@
                 <f:render partial="Job/ApplyCta" arguments="{job: job}"/>
                 <p class="job-finder__apply-hint"><f:translate key="job.applyHint"/></p>
             </aside>
-        </div>
 
-        <section class="job-finder__apply-form" id="bewerben">
-            <f:if condition="{applyAvailable}">
-                <f:then>
-                    <f:cObject
-                        typoscriptObjectPath="lib.smartJobApplyForm"
-                        data="{job: job.uid, title: job.title}"
-                        currentValueKey="job"
-                    />
-                </f:then>
-                <f:else>
-                    <div class="job-finder__apply-fallback">
-                        <p class="job-finder__aside-label"><f:translate key="job.apply"/></p>
-                        <h2>{job.title}</h2>
-                        <f:if condition="{job.applicationUrl}">
-                            <f:then>
-                                <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply">
-                                    <f:translate key="job.apply"/>
-                                </f:link.typolink>
-                            </f:then>
-                            <f:else>
-                                <p class="job-finder__lead"><f:translate key="job.applyMissing"/></p>
-                            </f:else>
-                        </f:if>
+            <div class="job-finder__main">
+                <f:if condition="{job.description}">
+                    <div class="job-finder__body" itemprop="description">
+                        <f:format.html>{job.description}</f:format.html>
                     </div>
-                </f:else>
-            </f:if>
-        </section>
+                </f:if>
+
+                <f:if condition="{job.requirements}">
+                    <section class="job-finder__block">
+                        <h2><f:translate key="job.requirements"/></h2>
+                        <ul class="job-finder__requirements">
+                            <f:for each="{job.requirements}" as="requirement">
+                                <li>
+                                    <strong>{requirement.title}</strong>
+                                    <f:if condition="{requirement.description}">
+                                        <span>{requirement.description}</span>
+                                    </f:if>
+                                </li>
+                            </f:for>
+                        </ul>
+                    </section>
+                </f:if>
+
+                <f:if condition="{job.benefits}">
+                    <section class="job-finder__block">
+                        <h2><f:translate key="job.benefits"/></h2>
+                        <ul class="job-finder__chips">
+                            <f:for each="{job.benefits}" as="benefit">
+                                <li title="{benefit.description}">{benefit.title}</li>
+                            </f:for>
+                        </ul>
+                    </section>
+                </f:if>
+
+                <f:if condition="{job.company.description}">
+                    <section class="job-finder__company">
+                        <h2><f:translate key="job.company"/></h2>
+                        <f:format.html>{job.company.description}</f:format.html>
+                    </section>
+                </f:if>
+
+                <section class="job-finder__apply-form" id="bewerben">
+                    <f:if condition="{applyAvailable}">
+                        <f:then>
+                            <f:cObject
+                                typoscriptObjectPath="lib.smartJobApplyForm"
+                                data="{job: job.uid, title: job.title}"
+                                currentValueKey="job"
+                            />
+                        </f:then>
+                        <f:else>
+                            <div class="job-finder__apply-fallback">
+                                <p class="job-finder__aside-label"><f:translate key="job.apply"/></p>
+                                <h2>{job.title}</h2>
+                                <f:if condition="{job.applicationUrl}">
+                                    <f:then>
+                                        <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply">
+                                            <f:translate key="job.apply"/>
+                                        </f:link.typolink>
+                                    </f:then>
+                                    <f:else>
+                                        <p class="job-finder__lead"><f:translate key="job.applyMissing"/></p>
+                                    </f:else>
+                                </f:if>
+                            </div>
+                        </f:else>
+                    </f:if>
+                </section>
+            </div>
+        </div>
 
         <f:if condition="{jobPostingJson}">
             <script type="application/ld+json">{jobPostingJson -> f:format.raw()}</script>

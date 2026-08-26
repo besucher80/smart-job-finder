@@ -12,7 +12,11 @@
             <f:render partial="Job/Pagination" arguments="{pagination: pagination, filter: filter}"/>
         </f:then>
         <f:else>
-            <p class="job-finder__empty"><f:translate key="list.empty"/></p>
+            <div class="job-finder__empty" role="status">
+                <p class="job-finder__kicker"><f:translate key="list.kicker"/></p>
+                <p class="job-finder__empty-title"><f:translate key="list.empty"/></p>
+                <p class="job-finder__empty-hint"><f:translate key="list.empty.hint"/></p>
+            </div>
         </f:else>
     </f:if>
 </div>

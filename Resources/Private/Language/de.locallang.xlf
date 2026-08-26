@@ -3,17 +3,29 @@
     <file source-language="en" target-language="de" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
         <header/>
         <body>
+            <trans-unit id="list.kicker" resname="list.kicker">
+                <source>Careers</source>
+                <target>Karriere</target>
+            </trans-unit>
             <trans-unit id="list.headline" resname="list.headline">
                 <source>Open positions</source>
                 <target>Offene Stellen</target>
+            </trans-unit>
+            <trans-unit id="list.lede" resname="list.lede">
+                <source>Filter by title, location, contract type and workplace.</source>
+                <target>Filtere nach Titel, Ort, Vertrag und Arbeitsmodell.</target>
             </trans-unit>
             <trans-unit id="list.count" resname="list.count">
                 <source>%s jobs</source>
                 <target>%s Stellen</target>
             </trans-unit>
             <trans-unit id="list.empty" resname="list.empty">
-                <source>No jobs match your filters. Try a broader search.</source>
-                <target>Keine Stellen passen zu Ihren Filtern. Versuchen Sie eine breitere Suche.</target>
+                <source>No matching positions</source>
+                <target>Keine passenden Stellen</target>
+            </trans-unit>
+            <trans-unit id="list.empty.hint" resname="list.empty.hint">
+                <source>Try a broader search or reset the filters.</source>
+                <target>Andere Suche versuchen oder Filter zurücksetzen.</target>
             </trans-unit>
             <trans-unit id="pagination.label" resname="pagination.label">
                 <source>Job list pagination</source>
@@ -102,6 +114,10 @@
             <trans-unit id="job.overview" resname="job.overview">
                 <source>At a glance</source>
                 <target>Auf einen Blick</target>
+            </trans-unit>
+            <trans-unit id="job.kicker" resname="job.kicker">
+                <source>Open role</source>
+                <target>Offene Stelle</target>
             </trans-unit>
             <trans-unit id="job.back" resname="job.back">
                 <source>Back to all jobs</source>

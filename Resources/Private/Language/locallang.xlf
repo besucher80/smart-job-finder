@@ -3,14 +3,23 @@
     <file source-language="en" datatype="plaintext" original="EXT:smart_job_finder/Resources/Private/Language/locallang.xlf" date="2026-08-25T12:00:00Z" product-name="smart_job_finder">
         <header/>
         <body>
+            <trans-unit id="list.kicker" resname="list.kicker">
+                <source>Careers</source>
+            </trans-unit>
             <trans-unit id="list.headline" resname="list.headline">
                 <source>Open positions</source>
+            </trans-unit>
+            <trans-unit id="list.lede" resname="list.lede">
+                <source>Filter by title, location, contract type and workplace.</source>
             </trans-unit>
             <trans-unit id="list.count" resname="list.count">
                 <source>%s jobs</source>
             </trans-unit>
             <trans-unit id="list.empty" resname="list.empty">
-                <source>No jobs match your filters. Try a broader search.</source>
+                <source>No matching positions</source>
+            </trans-unit>
+            <trans-unit id="list.empty.hint" resname="list.empty.hint">
+                <source>Try a broader search or reset the filters.</source>
             </trans-unit>
             <trans-unit id="pagination.label" resname="pagination.label">
                 <source>Job list pagination</source>
@@ -77,6 +86,9 @@
             </trans-unit>
             <trans-unit id="job.overview" resname="job.overview">
                 <source>At a glance</source>
+            </trans-unit>
+            <trans-unit id="job.kicker" resname="job.kicker">
+                <source>Open role</source>
             </trans-unit>
             <trans-unit id="job.back" resname="job.back">
                 <source>Back to all jobs</source>

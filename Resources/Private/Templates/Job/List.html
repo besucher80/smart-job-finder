@@ -8,29 +8,35 @@
     </f:if>
 
     <section
-        class="job-finder"
+        class="job-finder job-finder--board"
         data-job-finder
         data-live-filter="{settings.enableLiveFilter}"
         data-filter-url="{f:uri.action(action: 'filter')}"
         aria-labelledby="job-finder-heading"
     >
-        <header class="job-finder__header">
-            <div>
-                <h2 id="job-finder-heading" class="job-finder__title">
-                    <f:translate key="list.headline"/>
-                </h2>
-                <p
-                    class="job-finder__count"
-                    data-job-count
-                    data-count-template="{f:translate(key: 'list.count')}"
-                    aria-live="polite"
-                >
-                    <f:translate key="list.count" arguments="{0: jobCount}"/>
-                </p>
+        <header class="job-finder__intro">
+            <p class="job-finder__kicker"><f:translate key="list.kicker"/></p>
+            <div class="job-finder__intro-row">
+                <div>
+                    <h2 id="job-finder-heading" class="job-finder__title">
+                        <f:translate key="list.headline"/>
+                    </h2>
+                    <p class="job-finder__lede"><f:translate key="list.lede"/></p>
+                </div>
+                <div class="job-finder__intro-meta">
+                    <p
+                        class="job-finder__count"
+                        data-job-count
+                        data-count-template="{f:translate(key: 'list.count')}"
+                        aria-live="polite"
+                    >
+                        <f:translate key="list.count" arguments="{0: jobCount}"/>
+                    </p>
+                    <f:if condition="{settings.enableLiveFilter}">
+                        <p class="job-finder__hint"><f:translate key="filter.live"/></p>
+                    </f:if>
+                </div>
             </div>
-            <f:if condition="{settings.enableLiveFilter}">
-                <p class="job-finder__hint"><f:translate key="filter.live"/></p>
-            </f:if>
         </header>
 
         <f:render partial="Job/Filter" arguments="{_all}"/>

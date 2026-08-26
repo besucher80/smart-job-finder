@@ -1,8 +1,13 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 <article class="job-card{f:if(condition: job.featured, then: ' job-card--featured')}">
-    <f:if condition="{job.featured}">
-        <span class="job-finder__badge"><f:translate key="job.featured"/></span>
-    </f:if>
+    <div class="job-card__top">
+        <f:if condition="{companyNames.{job.uid}}">
+            <p class="job-card__employer">{companyNames.{job.uid}}</p>
+        </f:if>
+        <f:if condition="{job.featured}">
+            <span class="job-finder__badge"><f:translate key="job.featured"/></span>
+        </f:if>
+    </div>
     <h3 class="job-card__title">
         <f:if condition="{settings.detailPid}">
             <f:then>
@@ -13,16 +18,13 @@
             </f:else>
         </f:if>
     </h3>
-    <ul class="job-card__facts">
-        <f:if condition="{companyNames.{job.uid}}">
-            <li>{companyNames.{job.uid}}</li>
-        </f:if>
+    <p class="job-card__byline">
         <f:if condition="{job.location}">
-            <li>{job.location}</li>
+            <span>{job.location}</span>
         </f:if>
-        <li><f:translate key="job.employmentType.{job.employmentType}"/></li>
-        <li><f:translate key="job.workplaceType.{job.workplaceType}"/></li>
-    </ul>
+        <span><f:translate key="job.employmentType.{job.employmentType}"/></span>
+        <span><f:translate key="job.workplaceType.{job.workplaceType}"/></span>
+    </p>
     <f:if condition="{job.teaser}">
         <p class="job-card__teaser">{job.teaser}</p>
     </f:if>
