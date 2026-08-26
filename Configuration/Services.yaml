@@ -9,8 +9,12 @@ services:
     exclude:
       - '../Classes/Domain/Model/*'
       - '../Classes/Seo/JobXmlSitemapDataProvider.php'
+      - '../Classes/Dashboard/*'
 
   Agentur\SmartJobFinder\Hook\JobPublishDataHandlerHook:
+    public: true
+
+  Agentur\SmartJobFinder\Controller\Backend\OverviewController:
     public: true
 
   Agentur\SmartJobFinder\Seo\JobPageTitleProvider:
@@ -20,6 +24,12 @@ services:
     tags:
       - name: event.listener
         identifier: 'smart-job-finder/job-published-notification'
+        event: Agentur\SmartJobFinder\Event\JobPublishedEvent
+
+  Agentur\SmartJobFinder\EventListener\MarkJobNotifiedListener:
+    tags:
+      - name: event.listener
+        identifier: 'smart-job-finder/mark-job-notified'
         event: Agentur\SmartJobFinder\Event\JobPublishedEvent
 
   Agentur\SmartJobFinder\EventListener\FlushJobCacheListener:
@@ -44,7 +54,7 @@ services:
     tags:
       - name: console.command
         command: 'smart-job-finder:expire'
-        description: 'Hide jobs whose valid_through date has passed'
+        description: 'Hide expired jobs and announce jobs whose starttime is due'
         schedulable: true
 
   Agentur\SmartJobFinder\Command\NotifyTestCommand:

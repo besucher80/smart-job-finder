@@ -91,6 +91,8 @@ Route Enhancer (in die Site-Config übernehmen): siehe [`Documentation/route-enh
 
 Slug-Wechsel schreibt bei geladenem `EXT:redirects` einen 301 von `/jobs/alter-slug` → `/jobs/neuer-slug` (Prefix über Extension Configuration).
 
+Interne Bewerbungen sind **nicht** Teil dieser Extension. Dafür gibt es `agentur/smart-job-apply`: ist sie geladen, erscheint das Formular auf der Detailseite. `application_url` bleibt der Link nach draußen.
+
 ## JSON-API
 
 `GET /api/jobs` (auch unter `/de/api/jobs`) liefert einen JSON-Feed, **bevor** TYPO3 die Seite auflöst (PSR-15 Middleware).
@@ -113,6 +115,8 @@ Einstellungen unter **Admin Tools → Settings → Extension Configuration → s
 | `slackWebhookUrl` | leer | Incoming Webhook; nur `https://hooks.slack.com/…`, nur 2xx gilt als Erfolg |
 | `jobPathPrefix` | `/jobs` | Prefix für Slug-Redirects |
 | `apiStoragePid` | `0` | Pflicht für `/api/jobs` (sonst 403, kein Instanz-Leak) |
+| `apiCorsOrigin` | leer | CORS aus; `*` oder eine Origin wie `https://app.example` |
+| `apiRateLimit` | `60` | Requests pro IP / Minute auf `/api/jobs` (`0` = aus). Kein WAF. |
 
 Demo ohne Backend-Klick:
 
@@ -121,7 +125,9 @@ vendor/bin/typo3 smart-job-finder:notify-test
 vendor/bin/typo3 smart-job-finder:expire
 ```
 
-`expire` ist schedulable (Scheduler-Task), setzt `hidden=1` bei abgelaufenem `valid_through` und flusht den Listen-Cache einmal (kein Event pro Zeile).
+`expire` ist schedulable: versteckt abgelaufene `valid_through`-Stellen, **kündigt Stellen an, deren `starttime` fällig ist** (`JobPublishedEvent`, einmalig via `notified_at`) und flusht den Listen-Cache. Wird `starttime` wieder in die Zukunft gesetzt, geht `notified_at` auf 0 — der Scheduler darf erneut feuern.
+
+Dashboard-Widget (optional `EXT:dashboard`): offene Stellen, Ø Google-Jobs-Score, neue Bewerbungen aus Apply.
 
 Workspace-Publish (`EXT:workspaces`, optional): `JobPublishedEvent` bekommt `source=workspace` und die Workspace-ID. IRRE-Kinder (Requirements/Benefits) lösen das Event nicht aus — nur die Job-Tabelle. Ohne Workspaces startet die Extension unverändert.
 
@@ -143,6 +149,7 @@ public function __invoke(JobPublishedEvent|JobUnpublishedEvent $event): void
 - Event-Listener per Services.yaml-Tag (nicht nur `#[AsEventListener]`, das reicht erst ab v13)
 - Workspace-Publish über `AfterRecordPublishedEvent` (Core ab 12.2); Delete-Placeholder wird zum Unpublish; ohne `EXT:workspaces` startet die Extension trotzdem
 - XML-Sitemap nur mit `EXT:seo` (TypoScript-Config ist sonst wirkungslos)
+- Dashboard-Widget nur mit `EXT:dashboard` (Services.php registriert es bedingt)
 - Cache-Tags: `AddCacheTagEvent` ab v13, sonst `TSFE->addCacheTags()`
 - `ext_tables.sql` bleibt für v12 die Schema-Quelle; v13/14 generieren ergänzend aus TCA
 - Site Set für v13/14, Static TypoScript für v12
@@ -159,7 +166,7 @@ Weitere Entscheidungen:
 | Pagination | `itemsPerPage` (Default 12), kein unbegrenztes `findAll` |
 | N+1 | Firmennamen per einem JOIN, Kategorien nicht in der Liste |
 | Dropdown-Orte | `SELECT DISTINCT`, keine hydrierten Models |
-| Suche | MySQL `FULLTEXT` / `MATCH AGAINST`, sonst `LIKE` |
+| Suche | immer `LIKE`, zusätzlich MySQL `FULLTEXT` in BOOLEAN MODE; 0-Treffer fällt nicht mehr ins Leere. Tippfehler im Titel (z. B. Develoer / developer) über Levenshtein |
 | `/api/jobs` | getaggter Cache 60s, Limit 100, Language-Overlay + Enable Fields |
 | Notification-Log | `expire` löscht Einträge älter als 90 Tage |
 

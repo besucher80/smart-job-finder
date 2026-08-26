@@ -19,3 +19,9 @@ jobPathPrefix = /jobs
 # cat=api/10; type=int+; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.apiStoragePid
 apiStoragePid = 0
 
+# cat=api/20; type=string; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.apiCorsOrigin
+apiCorsOrigin =
+
+# cat=api/30; type=int+; label=LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:extconf.apiRateLimit
+apiRateLimit = 60
+

@@ -87,6 +87,22 @@
                 <source>Apply now</source>
                 <target>Jetzt bewerben</target>
             </trans-unit>
+            <trans-unit id="job.applyExternal" resname="job.applyExternal">
+                <source>Apply on company site</source>
+                <target>Auf der Unternehmensseite bewerben</target>
+            </trans-unit>
+            <trans-unit id="job.applyHint" resname="job.applyHint">
+                <source>Apply directly on this page — no extra hop.</source>
+                <target>Direkt auf dieser Seite bewerben — ohne Umweg.</target>
+            </trans-unit>
+            <trans-unit id="job.applyMissing" resname="job.applyMissing">
+                <source>The application form is not available yet. Please use the contact details in the job ad.</source>
+                <target>Das Bewerbungsformular ist noch nicht eingebunden. Bitte die Kontaktdaten in der Stellenanzeige nutzen.</target>
+            </trans-unit>
+            <trans-unit id="job.overview" resname="job.overview">
+                <source>At a glance</source>
+                <target>Auf einen Blick</target>
+            </trans-unit>
             <trans-unit id="job.back" resname="job.back">
                 <source>Back to all jobs</source>
                 <target>Zurück zu allen Stellen</target>

@@ -25,12 +25,12 @@ final class JobVisibility
             return false;
         }
 
-        $starttime = (int)($record['starttime'] ?? 0);
+        $starttime = self::timestamp($record['starttime'] ?? 0);
         if ($starttime > 0 && $starttime > $now) {
             return false;
         }
 
-        $endtime = (int)($record['endtime'] ?? 0);
+        $endtime = self::timestamp($record['endtime'] ?? 0);
         if ($endtime > 0 && $endtime <= $now) {
             return false;
         }
@@ -44,8 +44,25 @@ final class JobVisibility
     public static function isExpired(array $record, ?int $now = null): bool
     {
         $now ??= time();
-        $validThrough = (int)($record['valid_through'] ?? 0);
+        $validThrough = self::timestamp($record['valid_through'] ?? 0);
 
         return $validThrough > 0 && $validThrough < $now;
+    }
+
+    public static function timestamp(mixed $value): int
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->getTimestamp();
+        }
+        if (is_int($value) || is_float($value) || (is_string($value) && is_numeric($value))) {
+            return (int)$value;
+        }
+        if (is_string($value) && trim($value) !== '' && trim($value) !== '0') {
+            $parsed = strtotime($value);
+
+            return $parsed !== false ? $parsed : 0;
+        }
+
+        return 0;
     }
 }

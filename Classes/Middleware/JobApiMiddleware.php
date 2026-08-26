@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Agentur\SmartJobFinder\Middleware;
 
 use Agentur\SmartJobFinder\Domain\JobLanguageOverlay;
+use Agentur\SmartJobFinder\Http\ApiCors;
+use Agentur\SmartJobFinder\Http\ApiRateLimiter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -28,6 +30,7 @@ final class JobApiMiddleware implements MiddlewareInterface
         private readonly ConnectionPool $connectionPool,
         private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly CacheManager $cacheManager,
+        private readonly ApiRateLimiter $rateLimiter,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -45,10 +48,31 @@ final class JobApiMiddleware implements MiddlewareInterface
 
         $storagePid = (int)($config['apiStoragePid'] ?? 0);
         $languageId = $this->languageId($request);
-        $headers = [
-            'Cache-Control' => 'public, max-age=60',
-            'X-Smart-Job-Finder' => 'api',
-        ];
+        $headers = array_merge(
+            [
+                'Cache-Control' => 'public, max-age=60',
+                'X-Smart-Job-Finder' => 'api',
+            ],
+            ApiCors::headers((string)($config['apiCorsOrigin'] ?? ''), $request->getHeaderLine('Origin')),
+        );
+
+        if (strtoupper($request->getMethod()) === 'OPTIONS') {
+            return new JsonResponse([], 204, $headers);
+        }
+
+        $rateLimit = (int)($config['apiRateLimit'] ?? 60);
+        if ($rateLimit > 0) {
+            if ($this->rateLimiter->isLimited($request, $rateLimit)) {
+                $this->rateLimiter->hit($request);
+
+                return new JsonResponse(
+                    ['meta' => ['error' => 'rate limit exceeded'], 'data' => []],
+                    429,
+                    $headers,
+                );
+            }
+            $this->rateLimiter->hit($request);
+        }
 
         if ($storagePid <= 0) {
             return new JsonResponse(

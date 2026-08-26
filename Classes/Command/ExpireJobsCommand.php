@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Command;
 
+use Agentur\SmartJobFinder\Service\DueJobAnnouncer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,6 +17,7 @@ final class ExpireJobsCommand extends Command
     public function __construct(
         private readonly ConnectionPool $connectionPool,
         private readonly CacheManager $cacheManager,
+        private readonly DueJobAnnouncer $dueJobAnnouncer,
     ) {
         parent::__construct();
     }
@@ -43,8 +45,14 @@ final class ExpireJobsCommand extends Command
             $this->cacheManager->flushCachesByTag('tx_smartjobfinder');
         }
 
+        $announced = $this->dueJobAnnouncer->announce($now);
         $pruned = $this->pruneNotificationLog();
-        $output->writeln(sprintf('<info>Expired %d job(s), pruned %d log row(s).</info>', $affected, $pruned));
+        $output->writeln(sprintf(
+            '<info>Expired %d job(s), announced %d due starttime job(s), pruned %d log row(s).</info>',
+            $affected,
+            $announced,
+            $pruned,
+        ));
 
         return Command::SUCCESS;
     }

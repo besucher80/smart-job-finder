@@ -64,6 +64,9 @@
             <trans-unit id="tx_smartjobfinder_domain_model_job.featured.description" resname="tx_smartjobfinder_domain_model_job.featured.description">
                 <source>Featured jobs are listed first.</source>
             </trans-unit>
+            <trans-unit id="tx_smartjobfinder_domain_model_job.notified_at" resname="tx_smartjobfinder_domain_model_job.notified_at">
+                <source>Publication notified at</source>
+            </trans-unit>
             <trans-unit id="tx_smartjobfinder_domain_model_job.teaser" resname="tx_smartjobfinder_domain_model_job.teaser">
                 <source>Teaser</source>
             </trans-unit>

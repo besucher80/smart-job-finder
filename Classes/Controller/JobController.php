@@ -11,6 +11,7 @@ use Agentur\SmartJobFinder\Seo\JobFrontendSeoWriter;
 use Agentur\SmartJobFinder\Seo\JobPostingJsonLdBuilder;
 use Agentur\SmartJobFinder\Service\FrontendCacheTagger;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 final class JobController extends ActionController
@@ -54,6 +55,7 @@ final class JobController extends ActionController
         ]);
         $this->view->assignMultiple([
             'job' => $job,
+            'applyAvailable' => $this->isApplyFormAvailable(),
             'jobPostingJson' => $this->jsonLdBuilder->encode(
                 $this->jsonLdBuilder->build($job, $canonicalUrl),
             ),
@@ -76,10 +78,11 @@ final class JobController extends ActionController
         );
 
         $perPage = max(1, (int)($this->settings['itemsPerPage'] ?? 12));
-        $total = $this->jobRepository->countByFilter($filter);
+        $allJobs = $this->jobRepository->findByFilter($filter)->toArray();
+        $total = count($allJobs);
         $pages = max(1, (int)ceil($total / $perPage));
         $page = max(1, min($page, $pages));
-        $jobs = $this->jobRepository->findByFilter($filter, $perPage, ($page - 1) * $perPage)->toArray();
+        $jobs = array_slice($allJobs, ($page - 1) * $perPage, $perPage);
 
         $jobUids = array_map(static fn (Job $job): int => (int)$job->getUid(), $jobs);
         $isAjax = $isFilter && $this->isAjaxRequest();
@@ -103,15 +106,35 @@ final class JobController extends ActionController
             'itemListJson' => $isAjax ? '' : $this->jsonLdBuilder->encode(
                 $this->jsonLdBuilder->buildItemList($jobs, fn (Job $job): string => $this->jobUrl($job)),
             ),
+            'applyAvailable' => $this->isApplyFormAvailable(),
         ]);
 
         $this->cacheTagger->add($this->jobTags($jobs));
 
         if ($isFilter && !$isAjax) {
-            $this->view->setTemplate('List');
+            $this->useTemplate('List');
         }
 
         return $this->htmlResponse();
+    }
+
+    /**
+     * Switch the Fluid template for the current action.
+     *
+     * TYPO3 12 TemplateView has setTemplate(); TYPO3 13/14 FluidViewAdapter
+     * removed that method in favour of RenderingContext::setControllerAction().
+     */
+    private function useTemplate(string $templateName): void
+    {
+        if (method_exists($this->view, 'getRenderingContext')) {
+            $this->view->getRenderingContext()->setControllerAction($templateName);
+
+            return;
+        }
+
+        if (method_exists($this->view, 'setTemplate')) {
+            $this->view->setTemplate($templateName);
+        }
     }
 
     /**
@@ -193,5 +216,56 @@ final class JobController extends ActionController
     private function isAjaxRequest(): bool
     {
         return strtolower($this->request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
+    }
+
+    /**
+     * True when Apply is loaded and lib.smartJobApplyForm is present.
+     * TYPO3 14 f:cObject throws if the TypoScript path is missing.
+     */
+    private function isApplyFormAvailable(): bool
+    {
+        if (!ExtensionManagementUtility::isLoaded('smart_job_apply')) {
+            return false;
+        }
+
+        $setup = $this->frontendTypoScriptSetup();
+        foreach (['lib.', 'lib'] as $libKey) {
+            $lib = $setup[$libKey] ?? null;
+            if (!is_array($lib)) {
+                continue;
+            }
+            if (trim((string)($lib['smartJobApplyForm'] ?? '')) !== '') {
+                return true;
+            }
+            if (isset($lib['smartJobApplyForm.']) && is_array($lib['smartJobApplyForm.'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function frontendTypoScriptSetup(): array
+    {
+        $frontendTypoScript = $this->request->getAttribute('frontend.typoscript');
+        if (is_object($frontendTypoScript) && method_exists($frontendTypoScript, 'getSetupArray')) {
+            try {
+                $setup = $frontendTypoScript->getSetupArray();
+            } catch (\Throwable) {
+                $setup = [];
+            }
+
+            return is_array($setup) ? $setup : [];
+        }
+
+        $tsfe = $GLOBALS['TSFE'] ?? null;
+        if (is_object($tsfe) && isset($tsfe->tmpl) && is_object($tsfe->tmpl) && is_array($tsfe->tmpl->setup ?? null)) {
+            return $tsfe->tmpl->setup;
+        }
+
+        return [];
     }
 }

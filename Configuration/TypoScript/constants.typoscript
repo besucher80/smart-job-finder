@@ -1,3 +1,7 @@
+[extensionLoaded('smart_job_apply')]
+    @import 'EXT:smart_job_apply/Configuration/TypoScript/constants.typoscript'
+[END]
+
 plugin.tx_smartjobfinder_joblist {
   view {
     templateRootPath = EXT:smart_job_finder/Resources/Private/Templates/

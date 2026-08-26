@@ -13,10 +13,9 @@ return [
         'path' => '/module/web/smart-job-finder',
         'iconIdentifier' => 'smart-job-finder-plugin',
         'labels' => 'LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf',
-        'extensionName' => 'SmartJobFinder',
-        'controllerActions' => [
-            OverviewController::class => [
-                'index',
+        'routes' => [
+            '_default' => [
+                'target' => OverviewController::class . '::handleRequest',
             ],
         ],
     ],

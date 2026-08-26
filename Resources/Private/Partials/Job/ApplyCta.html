@@ -1,0 +1,10 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="job-finder__cta-row">
+    <a href="#bewerben" class="job-finder__apply"><f:translate key="job.apply"/></a>
+    <f:if condition="{job.applicationUrl}">
+        <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply job-finder__apply--ghost">
+            <f:translate key="job.applyExternal"/>
+        </f:link.typolink>
+    </f:if>
+</div>
+</html>

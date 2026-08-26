@@ -22,7 +22,31 @@
                 <source>Public job path prefix used for slug redirects (e.g. /jobs)</source>
             </trans-unit>
             <trans-unit id="extconf.apiStoragePid" resname="extconf.apiStoragePid">
-                <source>Storage PID for /api/jobs (0 = all pages)</source>
+                <source>Storage PID for /api/jobs (0 = 403, no instance-wide leak)</source>
+            </trans-unit>
+            <trans-unit id="extconf.apiCorsOrigin" resname="extconf.apiCorsOrigin">
+                <source>CORS origin for /api/jobs (empty = off, * or https://app.example)</source>
+            </trans-unit>
+            <trans-unit id="extconf.apiRateLimit" resname="extconf.apiRateLimit">
+                <source>Max /api/jobs requests per IP per minute (0 = off)</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.title" resname="widget.overview.title">
+                <source>Smart Job Finder</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.description" resname="widget.overview.description">
+                <source>Open jobs, average Google Jobs score and new applications</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.openJobs" resname="widget.overview.openJobs">
+                <source>Open jobs</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.averageScore" resname="widget.overview.averageScore">
+                <source>Average Google Jobs score</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.newApplications" resname="widget.overview.newApplications">
+                <source>New applications</source>
+            </trans-unit>
+            <trans-unit id="widget.overview.button" resname="widget.overview.button">
+                <source>Open Job Finder</source>
             </trans-unit>
         </body>
     </file>

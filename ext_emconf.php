@@ -17,6 +17,8 @@ $EM_CONF[$_EXTKEY] = [
             'workspaces' => '',
             'redirects' => '',
             'seo' => '',
+            'smart_job_apply' => '',
+            'dashboard' => '',
         ],
     ],
 ];

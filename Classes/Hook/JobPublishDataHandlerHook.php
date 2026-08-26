@@ -66,6 +66,11 @@ final class JobPublishDataHandlerHook
         if (array_key_exists('slug', $fieldArray)) {
             $this->slugBefore[$uid] = (string)($current['slug'] ?? '');
         }
+
+        // New future starttime → allow the scheduler to announce when it becomes due.
+        if (array_key_exists('starttime', $fieldArray) && (int)$fieldArray['starttime'] > time()) {
+            $fieldArray['notified_at'] = 0;
+        }
     }
 
     /**

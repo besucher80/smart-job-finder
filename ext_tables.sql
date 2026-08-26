@@ -25,6 +25,7 @@ CREATE TABLE tx_smartjobfinder_domain_model_job
     company            int(11) unsigned DEFAULT '0' NOT NULL,
     requirements       int(11) unsigned DEFAULT '0' NOT NULL,
     benefits           int(11) unsigned DEFAULT '0' NOT NULL,
+    notified_at        int(11) unsigned DEFAULT '0' NOT NULL,
 
     KEY slug (slug(80)),
     KEY company (company),
@@ -33,6 +34,7 @@ CREATE TABLE tx_smartjobfinder_domain_model_job
     KEY location (location),
     KEY featured_crdate (featured, crdate),
     KEY valid_through (valid_through),
+    KEY notified_starttime (notified_at, starttime),
     FULLTEXT KEY fulltext_search (title, teaser, department, location)
 );
 

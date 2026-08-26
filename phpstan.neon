@@ -3,6 +3,8 @@ parameters:
   paths:
     - Classes/Domain/JobVisibility.php
     - Classes/Domain/JobLanguageOverlay.php
+    - Classes/Domain/DueAnnouncement.php
+    - Classes/Http/ApiCors.php
     - Classes/Event
     - Classes/Workspaces
     - Classes/Notification/NotificationResult.php

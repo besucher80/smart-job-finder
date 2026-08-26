@@ -28,15 +28,40 @@
         return params;
     }
 
-    function updateCount(html) {
+    /**
+     * The filter action is a normal TYPO3 page request, so the response still
+     * contains language menu, navigation and breadcrumb. Only the job list
+     * fragment belongs in the results container.
+     */
+    function extractResultsHtml(html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var fragment = doc.querySelector('[data-job-filter-fragment]');
+        if (fragment) {
+            return fragment.innerHTML;
+        }
+        var nested = doc.querySelector('[data-job-results]');
+        if (nested) {
+            return nested.innerHTML;
+        }
+        var counted = doc.querySelector('[data-count]');
+        if (counted) {
+            return counted.outerHTML;
+        }
+        return '';
+    }
+
+    function updateCount() {
         if (!count) {
             return;
         }
-        var wrapper = document.createElement('div');
-        wrapper.innerHTML = html;
-        var counted = wrapper.querySelector('[data-count]');
-        var total = counted ? counted.getAttribute('data-count') : '0';
-        count.textContent = count.textContent.replace(/\d+/, total || '0');
+        var counted = results.querySelector('[data-count]');
+        var cards = results.querySelectorAll('.job-card').length;
+        var total = counted ? counted.getAttribute('data-count') : '';
+        if (total === '' || (total === '0' && cards > 0)) {
+            total = String(cards);
+        }
+        var template = count.getAttribute('data-count-template') || '%s';
+        count.textContent = template.replace('%s', total || '0');
     }
 
     function fetchResults() {
@@ -68,8 +93,12 @@
                 return response.text();
             })
             .then(function (html) {
-                results.innerHTML = html;
-                updateCount(html);
+                var fragment = extractResultsHtml(html);
+                if (!fragment) {
+                    throw new Error('Filter fragment missing');
+                }
+                results.innerHTML = fragment;
+                updateCount();
                 var next = url.pathname + url.search;
                 window.history.replaceState({}, '', next);
             })

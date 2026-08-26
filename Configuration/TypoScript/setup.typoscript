@@ -36,6 +36,23 @@ config.pageTitleProviders {
   }
 }
 
+# Embed the apply form on job detail when EXT:smart_job_apply is loaded, even if
+# its own site set / static include was not added. Duplicate import is a no-op.
+# The USER_INT is set here as well: @import inside conditions is not reliable on
+# every TYPO3 12–14 parser path, and f:cObject fatals if the path is missing.
+[extensionLoaded('smart_job_apply')]
+    @import 'EXT:smart_job_apply/Configuration/TypoScript/setup.typoscript'
+    lib.smartJobApplyForm = USER_INT
+    lib.smartJobApplyForm {
+        userFunc = Agentur\SmartJobApply\UserFunction\ApplyFormEmbed->render
+        vendorName = Agentur
+        extensionName = SmartJobApply
+        pluginName = Form
+        controller = Application
+        action = form
+    }
+[END]
+
 # Used only when EXT:seo is loaded. detailPid + storagePid must be set.
 plugin.tx_seo.config.xmlSitemap.sitemaps.jobs {
   provider = Agentur\SmartJobFinder\Seo\JobXmlSitemapDataProvider

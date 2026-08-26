@@ -12,6 +12,75 @@
             <trans-unit id="mlang_labels_tablabel" resname="mlang_labels_tablabel">
                 <source>Smart Job Finder</source>
             </trans-unit>
+            <trans-unit id="dashboard.title" resname="dashboard.title">
+                <source>Smart Job Finder</source>
+            </trans-unit>
+            <trans-unit id="dashboard.kicker" resname="dashboard.kicker">
+                <source>Job market</source>
+            </trans-unit>
+            <trans-unit id="dashboard.lead" resname="dashboard.lead">
+                <source>Google Jobs readiness, open positions and the publish notification log.</source>
+            </trans-unit>
+            <trans-unit id="dashboard.kpis" resname="dashboard.kpis">
+                <source>Key figures</source>
+            </trans-unit>
+            <trans-unit id="dashboard.mockOn" resname="dashboard.mockOn">
+                <source>Mock mode · nothing sent</source>
+            </trans-unit>
+            <trans-unit id="dashboard.mockOff" resname="dashboard.mockOff">
+                <source>Live delivery on</source>
+            </trans-unit>
+            <trans-unit id="dashboard.notifyOn" resname="dashboard.notifyOn">
+                <source>Notifications on</source>
+            </trans-unit>
+            <trans-unit id="dashboard.notifyOff" resname="dashboard.notifyOff">
+                <source>Notifications off</source>
+            </trans-unit>
+            <trans-unit id="dashboard.jobs" resname="dashboard.jobs">
+                <source>Open positions</source>
+            </trans-unit>
+            <trans-unit id="dashboard.featured" resname="dashboard.featured">
+                <source>Featured</source>
+            </trans-unit>
+            <trans-unit id="dashboard.expiring" resname="dashboard.expiring">
+                <source>Expire in 14 days</source>
+            </trans-unit>
+            <trans-unit id="dashboard.score" resname="dashboard.score">
+                <source>Google Jobs score</source>
+            </trans-unit>
+            <trans-unit id="dashboard.readiness" resname="dashboard.readiness">
+                <source>Google Jobs readiness</source>
+            </trans-unit>
+            <trans-unit id="dashboard.log" resname="dashboard.log">
+                <source>Notification log</source>
+            </trans-unit>
+            <trans-unit id="dashboard.logHint" resname="dashboard.logHint">
+                <source>Mock mail and Slack payloads from JobPublishedEvent</source>
+            </trans-unit>
+            <trans-unit id="dashboard.emptyJobs" resname="dashboard.emptyJobs">
+                <source>No visible positions yet.</source>
+            </trans-unit>
+            <trans-unit id="dashboard.emptyLog" resname="dashboard.emptyLog">
+                <source>No events yet. Publish a job or run vendor/bin/typo3 smart-job-finder:notify-test.</source>
+            </trans-unit>
+            <trans-unit id="dashboard.complete" resname="dashboard.complete">
+                <source>Ready for Google Jobs</source>
+            </trans-unit>
+            <trans-unit id="dashboard.edit" resname="dashboard.edit">
+                <source>Edit job</source>
+            </trans-unit>
+            <trans-unit id="dashboard.featuredBadge" resname="dashboard.featuredBadge">
+                <source>Featured</source>
+            </trans-unit>
+            <trans-unit id="dashboard.expiringBadge" resname="dashboard.expiringBadge">
+                <source>Expiring soon</source>
+            </trans-unit>
+            <trans-unit id="dashboard.noLocation" resname="dashboard.noLocation">
+                <source>No location</source>
+            </trans-unit>
+            <trans-unit id="dashboard.payload" resname="dashboard.payload">
+                <source>Payload</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

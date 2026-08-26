@@ -8,6 +8,7 @@ use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
 use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\Domain\Model\Category;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class Job extends AbstractEntity
@@ -31,7 +32,7 @@ class Job extends AbstractEntity
     protected bool $featured = false;
     protected int $crdate = 0;
     #[Lazy]
-    protected ?Company $company = null;
+    protected Company|LazyLoadingProxy|null $company = null;
 
     /**
      * @var ObjectStorage<Requirement>
@@ -237,7 +238,11 @@ class Job extends AbstractEntity
 
     public function getCompany(): ?Company
     {
-        return $this->company;
+        if ($this->company instanceof LazyLoadingProxy) {
+            $this->company->_loadRealInstance();
+        }
+
+        return $this->company instanceof Company ? $this->company : null;
     }
 
     public function setCompany(?Company $company): void

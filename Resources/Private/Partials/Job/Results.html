@@ -5,7 +5,7 @@
             <ul class="job-finder__grid">
                 <f:for each="{jobs}" as="job">
                     <li>
-                        <f:render partial="Job/Item" arguments="{job: job, companyNames: companyNames, settings: settings}"/>
+                        <f:render partial="Job/Item" arguments="{job: job, companyNames: companyNames, settings: settings, applyAvailable: applyAvailable}"/>
                     </li>
                 </f:for>
             </ul>

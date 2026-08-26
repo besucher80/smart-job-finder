@@ -1,107 +1,218 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-<h1>Smart Job Finder</h1>
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+<f:layout name="Module" />
 
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Offene Stellen</p>
-                <p class="display-6 mb-0">{jobCount}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Featured</p>
-                <p class="display-6 mb-0">{featuredCount}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Laufen in 14 Tagen ab</p>
-                <p class="display-6 mb-0">{expiringCount}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Google-Jobs-Score</p>
-                <p class="display-6 mb-0">{averageScore}%</p>
-            </div>
-        </div>
-    </div>
-</div>
+<f:section name="Content">
 
-<h2>Google Jobs Readiness</h2>
-<div class="table-fit mb-4">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Stelle</th>
-                <th>Ort</th>
-                <th>Score</th>
-                <th>Fehlt</th>
-            </tr>
-        </thead>
-        <tbody>
-            <f:for each="{jobs}" as="job">
-                <tr>
-                    <td>{job.title}</td>
-                    <td>{job.location}</td>
-                    <td>
-                        <strong>{job.googleJobs.score}%</strong>
-                    </td>
-                    <td>
-                        <f:if condition="{job.googleJobs.missing}">
-                            <f:then>
-                                <f:for each="{job.googleJobs.missing}" as="item" iteration="iter">{item}<f:if condition="!{iter.isLast}">, </f:if></f:for>
-                            </f:then>
-                            <f:else>—</f:else>
-                        </f:if>
-                    </td>
-                </tr>
-            </f:for>
-        </tbody>
-    </table>
-</div>
-
-<h2>Notification-Log</h2>
-<p class="text-muted">Mock-Mails und Slack-Payloads, ausgelöst durch <code>JobPublishedEvent</code>.</p>
-<div class="table-fit">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Zeit</th>
-                <th>Kanal</th>
-                <th>Status</th>
-                <th>Stelle</th>
-                <th>Hinweis</th>
-            </tr>
-        </thead>
-        <tbody>
-            <f:if condition="{logs}">
+    <div class="sjf">
+        <h1>
+            <core:icon identifier="smart-job-finder-plugin" size="default" />
+            <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.title" />
+        </h1>
+        <p>
+            <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.lead" />
+        </p>
+        <p class="sjf-flags">
+            <f:if condition="{notificationsEnabled}">
                 <f:then>
-                    <f:for each="{logs}" as="log">
-                        <tr>
-                            <td><f:format.date format="d.m.Y H:i">{log.tstamp}</f:format.date></td>
-                            <td>{log.channel}</td>
-                            <td><span class="badge text-bg-secondary">{log.status}</span></td>
-                            <td>{log.job_title} (#{log.job_uid})</td>
-                            <td>{log.message}</td>
-                        </tr>
-                    </f:for>
+                    <span class="badge badge-success">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.notifyOn" />
+                    </span>
                 </f:then>
                 <f:else>
-                    <tr>
-                        <td colspan="5">Noch keine Events. Stelle veröffentlichen oder <code>vendor/bin/typo3 smart-job-finder:notify-test</code> ausführen.</td>
-                    </tr>
+                    <span class="badge badge-notice">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.notifyOff" />
+                    </span>
                 </f:else>
             </f:if>
-        </tbody>
-    </table>
-</div>
+            <f:if condition="{mockMode}">
+                <f:then>
+                    <span class="badge badge-warning">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.mockOn" />
+                    </span>
+                </f:then>
+                <f:else>
+                    <span class="badge badge-success">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.mockOff" />
+                    </span>
+                </f:else>
+            </f:if>
+        </p>
+
+        <div class="sjf-kpis">
+            <article class="sjf-kpi">
+                <div class="sjf-kpi__icon">
+                    <core:icon identifier="smart-job-finder-job" size="default" />
+                </div>
+                <div>
+                    <p class="sjf-kpi__label">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.jobs" />
+                    </p>
+                    <p class="sjf-kpi__value">{jobCount}</p>
+                </div>
+            </article>
+            <article class="sjf-kpi">
+                <div class="sjf-kpi__icon">
+                    <core:icon identifier="actions-star" size="default" />
+                </div>
+                <div>
+                    <p class="sjf-kpi__label">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.featured" />
+                    </p>
+                    <p class="sjf-kpi__value">{featuredCount}</p>
+                </div>
+            </article>
+            <article class="sjf-kpi{f:if(condition: expiringCount, then: ' sjf-kpi--warning')}">
+                <div class="sjf-kpi__icon">
+                    <core:icon identifier="actions-clock" size="default" />
+                </div>
+                <div>
+                    <p class="sjf-kpi__label">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.expiring" />
+                    </p>
+                    <p class="sjf-kpi__value">{expiringCount}</p>
+                </div>
+            </article>
+            <article class="sjf-kpi sjf-kpi--score">
+                <div>
+                    <p class="sjf-kpi__label">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.score" />
+                    </p>
+                    <p class="sjf-kpi__value">{averageScore}%</p>
+                </div>
+                <svg class="sjf-ring sjf-ring--{scoreTone}" viewBox="0 0 36 36" aria-hidden="true">
+                    <circle class="sjf-ring__track" r="15.9155" cx="18" cy="18"></circle>
+                    <circle class="sjf-ring__value" r="15.9155" cx="18" cy="18" stroke-dasharray="{averageScore} 100"></circle>
+                    <text class="sjf-ring__text" x="18" y="21.4" text-anchor="middle">{averageScore}%</text>
+                </svg>
+            </article>
+        </div>
+
+        <div class="sjf-board">
+            <section class="sjf-panel">
+                <header class="sjf-panel__head">
+                    <h2>
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.readiness" />
+                    </h2>
+                </header>
+                <f:if condition="{jobs}">
+                    <f:then>
+                        <ul class="sjf-jobs">
+                            <f:for each="{jobs}" as="job">
+                                <li class="sjf-job">
+                                    <div class="sjf-job__top">
+                                        <h3>
+                                            <be:link.editRecord table="tx_smartjobfinder_domain_model_job" uid="{job.uid}">
+                                                <core:icon identifier="smart-job-finder-job" size="small" />
+                                                {job.title}
+                                            </be:link.editRecord>
+                                        </h3>
+                                        <span class="badge badge-{job.scoreTone}">{job.googleJobs.score}%</span>
+                                    </div>
+                                    <div class="sjf-job__meta">
+                                        <f:if condition="{job.featured}">
+                                            <span class="badge badge-warning">
+                                                <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.featuredBadge" />
+                                            </span>
+                                        </f:if>
+                                        <f:if condition="{job.isExpiring}">
+                                            <span class="badge badge-warning">
+                                                <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.expiringBadge" />
+                                            </span>
+                                        </f:if>
+                                        <span class="badge badge-notice">
+                                            <f:if condition="{job.location}">
+                                                <f:then>{job.location}</f:then>
+                                                <f:else>
+                                                    <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.noLocation" />
+                                                </f:else>
+                                            </f:if>
+                                        </span>
+                                        <f:if condition="{job.googleJobs.missing}">
+                                            <f:then>
+                                                <f:for each="{job.googleJobs.missing}" as="item">
+                                                    <span class="badge badge-danger">{item}</span>
+                                                </f:for>
+                                            </f:then>
+                                            <f:else>
+                                                <span class="badge badge-success">
+                                                    <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.complete" />
+                                                </span>
+                                            </f:else>
+                                        </f:if>
+                                    </div>
+                                    <svg class="sjf-meter sjf-meter--{job.scoreTone}" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true">
+                                        <rect class="sjf-meter__track" width="100" height="6" rx="3"></rect>
+                                        <rect class="sjf-meter__bar" width="{job.googleJobs.score}" height="6" rx="3"></rect>
+                                    </svg>
+                                </li>
+                            </f:for>
+                        </ul>
+                    </f:then>
+                    <f:else>
+                        <div class="sjf-infobox">
+                            <f:be.infobox state="-1">
+                                <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.emptyJobs" />
+                            </f:be.infobox>
+                        </div>
+                    </f:else>
+                </f:if>
+            </section>
+
+            <section class="sjf-panel">
+                <header class="sjf-panel__head">
+                    <h2>
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.log" />
+                    </h2>
+                    <p>
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.logHint" />
+                    </p>
+                </header>
+                <f:if condition="{logs}">
+                    <f:then>
+                        <ol class="sjf-log">
+                            <f:for each="{logs}" as="log">
+                                <li class="sjf-event sjf-event--{log.tone}">
+                                    <span class="sjf-event__dot" aria-hidden="true"></span>
+                                    <div>
+                                        <div class="sjf-event__row">
+                                            <time class="sjf-event__time">
+                                                <f:format.date format="d.m.Y H:i">{log.tstamp}</f:format.date>
+                                            </time>
+                                            <span class="badge badge-notice">{log.channel}</span>
+                                            <span class="badge badge-{log.tone}">{log.status}</span>
+                                        </div>
+                                        <p class="sjf-event__title">{log.job_title} (#{log.job_uid})</p>
+                                        <f:if condition="{log.message}">
+                                            <p class="text-muted">{log.message}</p>
+                                        </f:if>
+                                        <f:if condition="{log.payload}">
+                                            <details class="sjf-event__payload">
+                                                <summary>
+                                                    <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.payload" />
+                                                </summary>
+                                                <pre>{log.payload}</pre>
+                                            </details>
+                                        </f:if>
+                                    </div>
+                                </li>
+                            </f:for>
+                        </ol>
+                    </f:then>
+                    <f:else>
+                        <div class="sjf-infobox">
+                            <f:be.infobox state="-1">
+                                <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_mod.xlf:dashboard.emptyLog" />
+                            </f:be.infobox>
+                        </div>
+                    </f:else>
+                </f:if>
+            </section>
+        </div>
+    </div>
+</f:section>
 </html>

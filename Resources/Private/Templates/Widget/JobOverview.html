@@ -1,0 +1,70 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+<f:layout name="Widget/Widget"/>
+<f:section name="main">
+
+    <div class="widget-table-wrapper">
+        <table class="widget-table table table-striped table-hover">
+            <tbody>
+                <tr>
+                    <td class="col-icon col-nowrap">
+                        <core:icon identifier="smart-job-finder-job" />
+                    </td>
+                    <td class="col-title">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:widget.overview.openJobs" />
+                    </td>
+                    <td class="text-end nowrap">
+                        <strong>{stats.openJobs}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-icon col-nowrap">
+                        <core:icon identifier="actions-check" />
+                    </td>
+                    <td class="col-title">
+                        <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:widget.overview.averageScore" />
+                    </td>
+                    <td class="text-end nowrap">
+                        <f:if condition="{stats.averageScore} >= 80">
+                            <f:then>
+                                <span class="badge badge-success">{stats.averageScore}</span>
+                            </f:then>
+                            <f:else if="{stats.averageScore} >= 50">
+                                <span class="badge badge-warning">{stats.averageScore}</span>
+                            </f:else>
+                            <f:else>
+                                <span class="badge badge-danger">{stats.averageScore}</span>
+                            </f:else>
+                        </f:if>
+                    </td>
+                </tr>
+                <f:if condition="{stats.applyAvailable}">
+                    <tr>
+                        <td class="col-icon col-nowrap">
+                            <core:icon identifier="actions-envelope" />
+                        </td>
+                        <td class="col-title">
+                            <f:translate key="LLL:EXT:smart_job_finder/Resources/Private/Language/locallang_be.xlf:widget.overview.newApplications" />
+                        </td>
+                        <td class="text-end nowrap">
+                            <f:if condition="{stats.newApplications} > 0">
+                                <f:then>
+                                    <span class="badge badge-warning">{stats.newApplications}</span>
+                                </f:then>
+                                <f:else>
+                                    <span class="badge badge-notice">{stats.newApplications}</span>
+                                </f:else>
+                            </f:if>
+                        </td>
+                    </tr>
+                </f:if>
+            </tbody>
+        </table>
+    </div>
+
+</f:section>
+<f:section name="footer">
+    <f:render partial="Widget/Button" arguments="{button: button}"/>
+</f:section>
+</html>

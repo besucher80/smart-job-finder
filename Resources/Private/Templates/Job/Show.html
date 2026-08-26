@@ -3,15 +3,18 @@
 
 <f:section name="Main">
     <f:asset.css identifier="smart-job-finder" href="EXT:smart_job_finder/Resources/Public/Css/job-finder.css"/>
+    <f:if condition="{applyAvailable}">
+        <f:asset.css identifier="smart-job-apply" href="EXT:smart_job_apply/Resources/Public/Css/apply.css"/>
+    </f:if>
 
-    <article class="job-finder job-finder--detail" itemscope itemtype="https://schema.org/JobPosting">
+    <article class="job-finder job-finder--detail{f:if(condition: job.featured, then: ' job-finder--featured')}" itemscope itemtype="https://schema.org/JobPosting">
         <p class="job-finder__back">
             <f:link.action action="list" class="job-finder__back-link">
                 ← <f:translate key="job.back"/>
             </f:link.action>
         </p>
 
-        <header class="job-finder__detail-header">
+        <header class="job-finder__hero">
             <f:if condition="{job.featured}">
                 <span class="job-finder__badge"><f:translate key="job.featured"/></span>
             </f:if>
@@ -36,84 +39,134 @@
                     </f:for>
                 </ul>
             </f:if>
+            <f:if condition="{job.teaser}">
+                <p class="job-finder__lead">{job.teaser}</p>
+            </f:if>
+            <f:render partial="Job/ApplyCta" arguments="{job: job}"/>
         </header>
 
-        <f:if condition="{job.teaser}">
-            <p class="job-finder__lead">{job.teaser}</p>
-        </f:if>
+        <div class="job-finder__layout">
+            <div class="job-finder__main">
+                <div class="job-finder__body" itemprop="description">
+                    <f:format.html>{job.description}</f:format.html>
+                </div>
 
-        <div class="job-finder__body" itemprop="description">
-            <f:format.html>{job.description}</f:format.html>
+                <f:if condition="{job.requirements}">
+                    <section class="job-finder__block">
+                        <h2><f:translate key="job.requirements"/></h2>
+                        <ul class="job-finder__requirements">
+                            <f:for each="{job.requirements}" as="requirement">
+                                <li>
+                                    <strong>{requirement.title}</strong>
+                                    <f:if condition="{requirement.description}">
+                                        <span>{requirement.description}</span>
+                                    </f:if>
+                                </li>
+                            </f:for>
+                        </ul>
+                    </section>
+                </f:if>
+
+                <f:if condition="{job.benefits}">
+                    <section class="job-finder__block">
+                        <h2><f:translate key="job.benefits"/></h2>
+                        <ul class="job-finder__chips">
+                            <f:for each="{job.benefits}" as="benefit">
+                                <li title="{benefit.description}">{benefit.title}</li>
+                            </f:for>
+                        </ul>
+                    </section>
+                </f:if>
+
+                <f:if condition="{job.company.description}">
+                    <section class="job-finder__company">
+                        <h2><f:translate key="job.company"/></h2>
+                        <f:format.html>{job.company.description}</f:format.html>
+                    </section>
+                </f:if>
+            </div>
+
+            <aside class="job-finder__aside">
+                <p class="job-finder__aside-label"><f:translate key="job.overview"/></p>
+                <f:if condition="{job.company}">
+                    <div class="job-finder__employer">
+                        <f:if condition="{job.company.logo}">
+                            <f:image image="{job.company.logo}" alt="{job.company.name}" class="job-finder__logo" maxWidth="120"/>
+                        </f:if>
+                        <strong>{job.company.name}</strong>
+                    </div>
+                </f:if>
+                <dl class="job-finder__facts">
+                    <f:if condition="{job.salaryMin} || {job.salaryMax}">
+                        <div>
+                            <dt><f:translate key="job.salary"/></dt>
+                            <dd>
+                                <f:if condition="{job.salaryMin} && {job.salaryMax}">
+                                    <f:then>
+                                        {job.salaryMin -> f:format.number(decimals: 0, thousandsSeparator: '.')}–{job.salaryMax -> f:format.number(decimals: 0, thousandsSeparator: '.')} {job.salaryCurrency}
+                                    </f:then>
+                                    <f:else>
+                                        <f:if condition="{job.salaryMin}">{job.salaryMin -> f:format.number(decimals: 0, thousandsSeparator: '.')} {job.salaryCurrency}</f:if>
+                                        <f:if condition="{job.salaryMax}">{job.salaryMax -> f:format.number(decimals: 0, thousandsSeparator: '.')} {job.salaryCurrency}</f:if>
+                                    </f:else>
+                                </f:if>
+                                <span><f:translate key="job.salaryInterval.{job.salaryInterval}"/></span>
+                            </dd>
+                        </div>
+                    </f:if>
+                    <f:if condition="{job.validThrough}">
+                        <div>
+                            <dt><f:translate key="job.validThrough"/></dt>
+                            <dd><f:format.date format="d.m.Y">{job.validThrough}</f:format.date></dd>
+                        </div>
+                    </f:if>
+                    <f:if condition="{job.location}">
+                        <div>
+                            <dt><f:translate key="filter.location"/></dt>
+                            <dd>{job.location}</dd>
+                        </div>
+                    </f:if>
+                    <div>
+                        <dt><f:translate key="filter.employmentType"/></dt>
+                        <dd><f:translate key="job.employmentType.{job.employmentType}"/></dd>
+                    </div>
+                    <div>
+                        <dt><f:translate key="filter.workplaceType"/></dt>
+                        <dd><f:translate key="job.workplaceType.{job.workplaceType}"/></dd>
+                    </div>
+                </dl>
+                <f:render partial="Job/ApplyCta" arguments="{job: job}"/>
+                <p class="job-finder__apply-hint"><f:translate key="job.applyHint"/></p>
+            </aside>
         </div>
 
-        <f:if condition="{job.requirements}">
-            <section class="job-finder__block">
-                <h2><f:translate key="job.requirements"/></h2>
-                <ul class="job-finder__list">
-                    <f:for each="{job.requirements}" as="requirement">
-                        <li>
-                            <strong>{requirement.title}</strong>
-                            <f:if condition="{requirement.description}">
-                                <span>{requirement.description}</span>
-                            </f:if>
-                        </li>
-                    </f:for>
-                </ul>
-            </section>
-        </f:if>
-
-        <f:if condition="{job.benefits}">
-            <section class="job-finder__block">
-                <h2><f:translate key="job.benefits"/></h2>
-                <ul class="job-finder__chips">
-                    <f:for each="{job.benefits}" as="benefit">
-                        <li title="{benefit.description}">{benefit.title}</li>
-                    </f:for>
-                </ul>
-            </section>
-        </f:if>
-
-        <aside class="job-finder__aside">
-            <f:if condition="{job.salaryMin} || {job.salaryMax}">
-                <p>
-                    <strong><f:translate key="job.salary"/>:</strong>
-                    <f:if condition="{job.salaryMin} && {job.salaryMax}">
-                        <f:then>
-                            {job.salaryMin}–{job.salaryMax} {job.salaryCurrency}
-                        </f:then>
-                        <f:else>
-                            <f:if condition="{job.salaryMin}">{job.salaryMin} {job.salaryCurrency}</f:if>
-                            <f:if condition="{job.salaryMax}">{job.salaryMax} {job.salaryCurrency}</f:if>
-                        </f:else>
-                    </f:if>
-                    <f:translate key="job.salaryInterval.{job.salaryInterval}"/>
-                </p>
+        <section class="job-finder__apply-form" id="bewerben">
+            <f:if condition="{applyAvailable}">
+                <f:then>
+                    <f:cObject
+                        typoscriptObjectPath="lib.smartJobApplyForm"
+                        data="{job: job.uid, title: job.title}"
+                        currentValueKey="job"
+                    />
+                </f:then>
+                <f:else>
+                    <div class="job-finder__apply-fallback">
+                        <p class="job-finder__aside-label"><f:translate key="job.apply"/></p>
+                        <h2>{job.title}</h2>
+                        <f:if condition="{job.applicationUrl}">
+                            <f:then>
+                                <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply">
+                                    <f:translate key="job.apply"/>
+                                </f:link.typolink>
+                            </f:then>
+                            <f:else>
+                                <p class="job-finder__lead"><f:translate key="job.applyMissing"/></p>
+                            </f:else>
+                        </f:if>
+                    </div>
+                </f:else>
             </f:if>
-            <f:if condition="{job.validThrough}">
-                <p>
-                    <strong><f:translate key="job.validThrough"/>:</strong>
-                    <f:format.date format="d.m.Y">{job.validThrough}</f:format.date>
-                </p>
-            </f:if>
-            <f:if condition="{job.applicationUrl}">
-                <p>
-                    <f:link.typolink parameter="{job.applicationUrl}" class="job-finder__apply">
-                        <f:translate key="job.apply"/>
-                    </f:link.typolink>
-                </p>
-            </f:if>
-        </aside>
-
-        <f:if condition="{job.company}">
-            <section class="job-finder__company">
-                <h2><f:translate key="job.company"/></h2>
-                <f:if condition="{job.company.logo}">
-                    <f:image image="{job.company.logo}" alt="{job.company.name}" class="job-finder__logo" maxWidth="160"/>
-                </f:if>
-                <h3>{job.company.name}</h3>
-                <f:format.html>{job.company.description}</f:format.html>
-            </section>
-        </f:if>
+        </section>
 
         <f:if condition="{jobPostingJson}">
             <script type="application/ld+json">{jobPostingJson -> f:format.raw()}</script>

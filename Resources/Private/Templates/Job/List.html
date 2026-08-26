@@ -19,7 +19,12 @@
                 <h2 id="job-finder-heading" class="job-finder__title">
                     <f:translate key="list.headline"/>
                 </h2>
-                <p class="job-finder__count" data-job-count aria-live="polite">
+                <p
+                    class="job-finder__count"
+                    data-job-count
+                    data-count-template="{f:translate(key: 'list.count')}"
+                    aria-live="polite"
+                >
                     <f:translate key="list.count" arguments="{0: jobCount}"/>
                 </p>
             </div>
@@ -31,7 +36,7 @@
         <f:render partial="Job/Filter" arguments="{_all}"/>
 
         <div class="job-finder__results" data-job-results>
-            <f:render partial="Job/Results" arguments="{jobs: jobs, jobCount: jobCount, companyNames: companyNames, pagination: pagination, filter: filter, settings: settings}"/>
+            <f:render partial="Job/Results" arguments="{jobs: jobs, jobCount: jobCount, companyNames: companyNames, pagination: pagination, filter: filter, settings: settings, applyAvailable: applyAvailable}"/>
         </div>
 
         <f:if condition="{itemListJson}">

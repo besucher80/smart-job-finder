@@ -13,13 +13,16 @@
             </f:else>
         </f:if>
     </h3>
-    <p class="job-card__meta">
-        <f:if condition="{companyNames.{job.uid}}">{companyNames.{job.uid}} · </f:if>
-        <f:if condition="{job.location}">{job.location} · </f:if>
-        <f:translate key="job.employmentType.{job.employmentType}"/>
-        ·
-        <f:translate key="job.workplaceType.{job.workplaceType}"/>
-    </p>
+    <ul class="job-card__facts">
+        <f:if condition="{companyNames.{job.uid}}">
+            <li>{companyNames.{job.uid}}</li>
+        </f:if>
+        <f:if condition="{job.location}">
+            <li>{job.location}</li>
+        </f:if>
+        <li><f:translate key="job.employmentType.{job.employmentType}"/></li>
+        <li><f:translate key="job.workplaceType.{job.workplaceType}"/></li>
+    </ul>
     <f:if condition="{job.teaser}">
         <p class="job-card__teaser">{job.teaser}</p>
     </f:if>
@@ -29,10 +32,16 @@
                 <f:link.action action="show" arguments="{job: job}" pageUid="{settings.detailPid}" class="job-finder__apply job-finder__apply--ghost">
                     <f:translate key="job.readMore"/>
                 </f:link.action>
+                <f:link.action action="show" arguments="{job: job}" pageUid="{settings.detailPid}" section="bewerben" class="job-finder__apply">
+                    <f:translate key="job.apply"/>
+                </f:link.action>
             </f:then>
             <f:else>
                 <f:link.action action="show" arguments="{job: job}" class="job-finder__apply job-finder__apply--ghost">
                     <f:translate key="job.readMore"/>
+                </f:link.action>
+                <f:link.action action="show" arguments="{job: job}" section="bewerben" class="job-finder__apply">
+                    <f:translate key="job.apply"/>
                 </f:link.action>
             </f:else>
         </f:if>

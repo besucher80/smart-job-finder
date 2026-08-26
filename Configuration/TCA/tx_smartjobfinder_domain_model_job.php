@@ -55,6 +55,7 @@ return [
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                     --palette--;;hidden,
                     --palette--;;access,
+                    notified_at,
             ',
         ],
     ],
@@ -111,6 +112,17 @@ return [
                 'range' => [
                     'upper' => mktime(0, 0, 0, 1, 1, 2038),
                 ],
+            ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly',
+        ],
+        'notified_at' => [
+            'exclude' => true,
+            'label' => $lll . 'tx_smartjobfinder_domain_model_job.notified_at',
+            'config' => [
+                'type' => 'datetime',
+                'default' => 0,
+                'readOnly' => true,
             ],
             'l10n_mode' => 'exclude',
             'l10n_display' => 'defaultAsReadonly',

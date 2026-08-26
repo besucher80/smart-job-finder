@@ -32,7 +32,9 @@
         "typo3/cms-redirects": "Creates 301 redirects when a job slug changes",
         "typo3/cms-scheduler": "Run smart-job-finder:expire as a recurring task",
         "typo3/cms-workspaces": "Dispatches JobPublishedEvent when a workspace job is published to live",
-        "typo3/cms-seo": "XML sitemap of public jobs (JobXmlSitemapDataProvider)"
+        "typo3/cms-seo": "XML sitemap of public jobs (JobXmlSitemapDataProvider)",
+        "agentur/smart-job-apply": "Internal application form with upload and GDPR retention",
+        "typo3/cms-dashboard": "Job overview widget on the TYPO3 dashboard"
     },
     "scripts": {
         "test": "phpunit -c phpunit.xml.dist",

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Agentur\SmartJobFinder\Domain\Repository;
 
+use Agentur\SmartJobFinder\Domain\JobSearchQuery;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -26,7 +27,9 @@ class JobRepository extends Repository
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     /**
      * @param array{
@@ -56,7 +59,9 @@ class JobRepository extends Repository
      */
     public function countByFilter(array $filter): int
     {
-        return $this->buildFilterQuery($filter)->count();
+        // Extbase Query::count() builds a different SQL than execute()
+        // (especially with LIKE + OR + IN) and can return 0 while find() hits.
+        return count($this->buildFilterQuery($filter)->execute()->toArray());
     }
 
     /**
@@ -174,41 +179,44 @@ class JobRepository extends Repository
 
     private function searchConstraint(QueryInterface $query, string $search): object
     {
-        $fullTextUids = $this->searchUidsViaFullText($search);
-        if ($fullTextUids !== null) {
-            return $fullTextUids === []
-                ? $query->equals('uid', 0)
-                : $query->in('uid', $fullTextUids);
-        }
-
-        $like = '%' . addcslashes($search, '%_\\') . '%';
-
-        return $query->logicalOr(
+        $like = JobSearchQuery::likeNeedle($search);
+        $parts = [
             $query->like('title', $like),
             $query->like('teaser', $like),
             $query->like('location', $like),
             $query->like('department', $like),
-        );
+        ];
+
+        $uids = array_values(array_unique(array_merge(
+            $this->searchUidsViaFullText($search) ?? [],
+            $this->searchUidsViaFuzzyTitle($search),
+        )));
+        if ($uids !== []) {
+            $parts[] = $query->in('uid', $uids);
+        }
+
+        return $query->logicalOr(...$parts);
     }
 
     /**
-     * @return list<int>|null null = fulltext not available, use LIKE
+     * @return list<int>|null null = fulltext not available
      */
     private function searchUidsViaFullText(string $search): ?array
     {
-        if (mb_strlen($search) < 3 || !$this->supportsMysqlFullText()) {
+        $expression = JobSearchQuery::booleanExpression($search);
+        if ($expression === '' || !$this->supportsMysqlFullText()) {
             return null;
         }
 
         $connection = $this->connectionPool->getConnectionForTable(self::TABLE);
         try {
             $sql = 'SELECT uid FROM ' . self::TABLE
-                . ' WHERE MATCH (title, teaser, department, location) AGAINST (:q IN NATURAL LANGUAGE MODE)'
+                . ' WHERE MATCH (title, teaser, department, location) AGAINST (:q IN BOOLEAN MODE)'
                 . ' AND hidden = 0 AND deleted = 0'
                 . ' AND (valid_through = 0 OR valid_through >= :now)'
                 . ' LIMIT 500';
             $uids = [];
-            foreach ($connection->executeQuery($sql, ['q' => $search, 'now' => time()])->fetchFirstColumn() as $uid) {
+            foreach ($connection->executeQuery($sql, ['q' => $expression, 'now' => time()])->fetchFirstColumn() as $uid) {
                 $uids[] = (int)$uid;
             }
 
@@ -216,6 +224,33 @@ class JobRepository extends Repository
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function searchUidsViaFuzzyTitle(string $search): array
+    {
+        if (mb_strlen(trim($search)) < 5) {
+            return [];
+        }
+
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
+        $queryBuilder
+            ->select('uid', 'title')
+            ->from(self::TABLE)
+            ->setMaxResults(500);
+        $this->applyNotExpired($queryBuilder);
+        $this->applyStoragePid($queryBuilder);
+
+        $uids = [];
+        foreach ($queryBuilder->executeQuery()->fetchAllAssociative() as $row) {
+            if (JobSearchQuery::titleMatches((string)($row['title'] ?? ''), $search)) {
+                $uids[] = (int)$row['uid'];
+            }
+        }
+
+        return $uids;
     }
 
     private function supportsMysqlFullText(): bool
